@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- For Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Welcome</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark sticky-top">
+        <div class="container-fluid nav-wrapper">
+            <a href="employee-dashboard.html" class="navbar-brand text-light"><i class="fas fa-piggy-bank"></i> Maximus</a>
+            <button class="navbar-toggler text-light" type="button" data-toggle="collapse" data-target="#navbar-responsive">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar-responsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item m-1">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle nav-link" type="button" id="logs-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Logs
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a class="dropdown-item" href="#">Deposits & Withdrawals</a>
+                              <a class="dropdown-item" href="#">Money Transfer</a>
+                            </div>
+                          </div>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="customer-applications.html"
+                         class="nav-link btn btn-light">Applications</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="#" class="btn btn-outline-light nav-link">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>        
+    </nav>
+
+    <div class="container-md">
+        <div class="jumbotron text-center">
+            <h2 class="display-4">Customer Accounts</h2>
+            <hr>
+            <form action="" id="view-all-accounts-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="account" id="view-all-accounts" placeholder="Enter User Name Here...">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="form-control btn btn-dark" value="View All Accounts">
+                </div>
+            </form>
+            <hr>
+            <form action="" id="view-account-form">
+                <div class="form-group">
+                    <input type="number" class="form-control" id="view-account-input" placeholder="Enter The Account Number Here...">
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="View An Account" class="form-control btn btn-dark">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container-md d-none" id="display-accounts-table-wrapper">
+        <h2 class="display-4">Accounts For User: <span id="display-user-name">userName</span></h2>
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>Holder</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="display-accounts-table-body">
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Scripts For Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>  
+    <!-- For Icons With Font Awesome -->
+    <script src="https://kit.fontawesome.com/554f0629d2.js" crossorigin="anonymous"></script>  
+    <!-- For Customer Scripts -->
+    <script src="scripts/employee-dashboard.js"></script>
+</body>
+</html>

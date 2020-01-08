@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- For Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/customer-dashboard.css">
+
+    <title>Welcome</title>
+</head>
+<body>
+
+    <!-- Modal For Depositing/Withdrawal -->
+    <div class="modal fade" id="deposit-withdrawal-modal" tabindex="-1" role="dialog" aria-labelledby="depositWithdrawalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Account Number <span id="account-number"></span> </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="POST" id="depsoit-form">
+                <div class="form-group">
+                    <input type="number" class="form-control" name="deposit" id="transaction-deposit" placeholder="Enter $ Amount...">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-dark btn-block" value="Deposit" id="deposit">
+                </div>
+              </form>
+              <form action="" method="POST" id="withdrawl-form">
+                <div class="form-group">
+                    <input type="number" class="form-control" name="withdrawl" id="transaction-withdrawal" placeholder="Enter $ Amount...">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-block btn-dark" value="Withdrawal" id="withdrawal">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Modal For Money Transfers -->
+    <div class="modal fade" id="post-transfer-modal" tabindex="-1" role="dialog" aria-labelledby="moneyTransferLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Money Transfer</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" id="money-transfer-form">
+                  <div class="form-group">
+                      <select name="post-transfer-source" id="post-transfer-source" class="custom-select">
+                      </select>
+                  </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="post-transfer-destination" placeholder="Destination Account Number...">
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="post-transfer-amount" placeholder="Enter Amount in $ To Transfer">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-block btn-outline-dark">Send Transfer</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Modal For  Applying For A Bank Account -->
+    <div class="modal fade" id="apply-account-modal" tabindex="-1" role="dialog" aria-labelledby="applyAccountLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apply For An Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="apply-account-form">
+                    <div class="form-group">
+                        <input type="number" id="initial-balance" class="form-control" placeholder="Enter initial balance for account...">
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Submit" class="btn btn-block btn-success">
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark sticky-top">
+        <div class="container-fluid nav-wrapper">
+            <a href="customer-dashboard.html" class="navbar-brand text-light"><i class="fas fa-piggy-bank"></i> Maximus</a>
+            <button class="navbar-toggler text-light" type="button" data-toggle="collapse" data-target="#navbar-responsive">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar-responsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item m-1">
+                        <a href="#" class="btn btn-light nav-link" data-toggle="modal" data-target="#post-transfer-modal">Post Money Transfer</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="view-money-transfers.html" class="btn btn-light nav-link">View/Accept Money Transfers</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="#" class="btn btn-outline-light nav-link">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>        
+    </nav>
+    
+    <div class="container-md">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Welcome To Maximus Bank</h1>
+            <p class="lead">How Can We Assist You Today?</p>
+            <form id="search-accounts-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="account" id="search-accounts" placeholder="Enter Bank Account Number Here...">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="form-control" id="submit-account-search" value="Search For Specific Account">
+                </div>
+            </form>
+            <button class="btn btn-block btn-secondary" id="show-all-accounts">Show All Accounts</button>
+            <hr>
+            <button class="btn btn-block btn-danger" data-toggle="modal" data-target="#apply-account-modal">Apply For A Bank Account</button>
+        </div>
+
+
+
+        <table class="table table-hover table-dark">
+            <thead>
+                <tr>
+                    <th>Account #</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="table-accounts" data-toggle="modal" data-target="#deposit-withdrawal-modal">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts For Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>    
+    <!-- For Icons With Font Awesome -->
+    <script src="https://kit.fontawesome.com/554f0629d2.js" crossorigin="anonymous"></script>
+    <!-- Custom Script -->
+    <script src="scripts/customer-dashboard.js"></script>
+</body>
+</html>
