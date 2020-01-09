@@ -8,34 +8,35 @@ import java.sql.SQLException;
 import com.bank.dao.UserDAO;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.User;
+import com.bank.to.types.UserType;
 import com.bank.util.OracleDBConnection;
 
 public class UserDAOImpl implements UserDAO {
 
 	@Override
-	public boolean validateUser(User user) throws BusinessException {
-		boolean userFound = false;
+	public User validateUser(User user) throws BusinessException {
+		User copyUser = new User(user);
 		try(Connection conn = OracleDBConnection.getConnection()){
 			// Create SQL Search Statement
-			String sql = "Select user_name From Users Where user_name = ? And password = ?";
+			String sql = "Select user_type From Users Where user_name = ? And password = ?";
 			// Create Statement Object
 			PreparedStatement statement = conn.prepareStatement(sql);
 			// Get User Name and Password From Passed Object
-			String userName = user.getUserName();
-			String password = user.getPassword();
+			String userName = copyUser.getUserName();
+			String password = copyUser.getPassword();
 			// Execute Query
 			statement.setString(1, userName);
 			statement.setString(2, password);
 			ResultSet result = statement.executeQuery();
 			if(result.next()) {
-				userFound = true;
+				copyUser.setUserType(UserType.fromInt(result.getInt("user_type")));
 			}else {
 				throw new BusinessException("User Not Found");
 			}			
 		} catch (ClassNotFoundException | SQLException e) {
 			throw new BusinessException(e.getMessage());
 		}
-		return userFound;
+		return copyUser;
 	}
 
 	@Override

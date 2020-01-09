@@ -9,6 +9,11 @@ public class User {
 	public User() {
 		// TODO Auto-generated constructor stub
 	}
+	public User(User other) {
+		this.user_name = other.getUserName();
+		this.password = other.getPassword();
+		this.user_type = other.getUserType();
+	}
 	public User(String user_name, String password, UserType user_type) {
 		super();
 		this.user_name = user_name;
