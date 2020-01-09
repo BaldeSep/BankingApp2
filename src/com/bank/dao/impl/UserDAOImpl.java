@@ -1,10 +1,10 @@
-package com.bank.bo.impl;
+package com.bank.dao.impl;
 
-import com.bank.bo.UserBO;
+import com.bank.dao.UserDAO;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.User;
 
-public class UserBOImpl implements UserBO {
+public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public boolean validateUser(User user) throws BusinessException {
