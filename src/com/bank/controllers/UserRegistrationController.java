@@ -1,34 +1,29 @@
 package com.bank.controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.User;
 import com.bank.to.types.UserType;
-import com.google.gson.Gson;
 
 /**
- * Servlet implementation class LoginController
+ * Servlet implementation class UserRegistrationController
  */
-@WebServlet("/login")
-public class LoginController extends HttpServlet {
+@WebServlet("/register")
+public class UserRegistrationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginController() {
+    public UserRegistrationController() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -37,27 +32,20 @@ public class LoginController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/plain");
-		response.setCharacterEncoding("utf-8");
-		PrintWriter out = response.getWriter();
-		Gson gson = new Gson();
-		User user = gson.fromJson(request.getReader(), User.class);
+		String userName = request.getParameter("username");
+		String password= request.getParameter("password-1");
+		User user = new User(userName, password, UserType.Customer);
 		UserBO userBO = new UserBOImpl();
 		try {
-			User validatedUser = userBO.validateUser(user);
-			if(validatedUser != null) {
-				HttpSession session = request.getSession();
-				session.setAttribute("user", validatedUser);
-				response.sendRedirect(request.getContextPath() + "/dashboard");
+			User registeredUser = userBO.registerUser(user);
+			if(registeredUser != null) {
+				response.sendRedirect( request.getContextPath() + "/");
 			}else {
-				response.setStatus(401);
-				out.print("User Could Not Be Found!!!");
+				response.sendRedirect( request.getContextPath() + "registration-error.html");
 			}
-		}catch(BusinessException e) {
-			response.setStatus(401);
-			out.print(e.getMessage());
+		} catch (BusinessException e) {
+			response.sendRedirect(request.getContextPath() + "registration-error.html");
 		}
-
 	}
 
 }

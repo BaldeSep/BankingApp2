@@ -9,19 +9,41 @@ let inputPassword = document.getElementById("password");
 let alertUserName = document.getElementById("alert-invalid-username");
 let alertPassword = document.getElementById("alert-invalid-password");
 
-// Add Event Listener To Form
-formCustomer.addEventListener("submit", (e) => {
-    let userName = inputUserName.value.trim();
+
+
+function handleSubmit(e){
+	let userName = inputUserName.value.trim();
     let password = inputPassword.value.trim();
-    if(!verify(userName, 5)){
+
+    let validUserName = verify(userName, 5);
+    let validPassword =  verify(password, 3);
+    if(!validUserName){
         showInvalidUserName();
         e.preventDefault();
-    }
-    if(!verify(password, 3)){
+    }else if(!validPassword){
         showInvalidPassword();
         e.preventDefault();
+    }else{
+	    fetch("http://localhost:5050/MaximusBank/login", {
+	    	method: "POST",
+            redirect: 'follow',
+	    	headers: {
+	    		'Accept': ['text/plain', 'text/html'],
+	    		'Content-Type': 'application/json'
+            },
+	    	body: JSON.stringify({ user_name: userName, password:password })
+        }).then( res => {
+            if(res.status == 401){
+                return res.text();
+            }else if(res.redirected){
+                window.location.href = res.url;
+            }
+        }).then( text => {
+            console.log(text);
+        } )
     }
-});
+    return false;
+}
 
 
 // Verify User Name and Password
