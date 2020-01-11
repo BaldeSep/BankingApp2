@@ -1,5 +1,5 @@
 // Grab Form
-let formCustomer = document.getElementById("login-form");
+let formLogin = document.getElementById("login-form");
 
 // Get Form Inputs
 let inputUserName = document.getElementById("user-name");
@@ -22,7 +22,8 @@ function handleSubmit(){
     }else if(!validPassword){
         showInvalidPassword();
     }else{
-	    fetch("http://localhost:5050/MaximusBank/login", {
+        let endPoint = formLogin.dataset.end;
+	    fetch(`http://localhost:5050/MaximusBank/${endPoint}`, {
 	    	method: "POST",
             redirect: 'follow',
 	    	headers: {
