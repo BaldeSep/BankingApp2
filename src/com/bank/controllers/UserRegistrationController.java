@@ -1,6 +1,8 @@
 package com.bank.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,7 +13,9 @@ import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.User;
+import com.bank.to.UserRegistrationRequest;
 import com.bank.to.types.UserType;
+import com.google.gson.Gson;
 
 /**
  * Servlet implementation class UserRegistrationController
@@ -32,20 +36,36 @@ public class UserRegistrationController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String userName = request.getParameter("username");
-		String password= request.getParameter("password-1");
-		User user = new User(userName, password, UserType.Customer);
+		Gson gson = new Gson();
+ 		PrintWriter out = response.getWriter();
+		response.setContentType("text/plain");
+		UserRegistrationRequest userReg = gson.fromJson(request.getReader(), UserRegistrationRequest.class);
+		String userName = userReg.getUserName();
+		String passwordOne = userReg.getPasswordOne();
+		String passwordTwo = userReg.getPasswordTwo();
+		User user = new User(userName, passwordOne, UserType.Customer);
 		UserBO userBO = new UserBOImpl();
 		try {
-			User registeredUser = userBO.registerUser(user);
+			User registeredUser = userBO.registerUser(user, passwordOne, passwordTwo);
 			if(registeredUser != null) {
+				response.setStatus(200);
 				response.sendRedirect( request.getContextPath() + "/");
 			}else {
-				response.sendRedirect( request.getContextPath() + "registration-error.html");
+				response.setStatus(401);
+				out.print("There Was Issue Registering With That User Name And Password");
 			}
 		} catch (BusinessException e) {
-			response.sendRedirect(request.getContextPath() + "registration-error.html");
+			response.setStatus(401);
+			out.print(e.getMessage());
 		}
 	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("text/html");
+		resp.sendRedirect(req.getContextPath() + "/register-customer.html");
+	}
+	
+	
 
 }

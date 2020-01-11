@@ -12,31 +12,47 @@ let alertInvalidPassword = document.getElementById("alert-invalid-password");
 let alertPasswordMismatch = document.getElementById("alert-password-mismatch");
 
 
-// Add Event Listener For Form Registration
-formCustomerRegsitration.addEventListener("submit", (e) => {
+// Handle Submit Event for Registration Form
+function handleSubmit(){
     let userName = inputTextUserName.value.trim();
     let passwordOne = inputPasswordOne.value;
     let passwordTwo = inputPasswordTwo.value;
     
-    if(!validateInput(userName, 5)){
+    let validUserName = validateInput(userName, 5);
+    let passwordsMatch = ( passwordOne === passwordTwo );
+    let validPassword = validateInput(passwordOne, 3);
+
+    if(!validUserName){
         showInvalidUserNameAlert();
-        e.preventDefault();
-    }
-    let matchingPasswords = passwordsMatch(passwordOne, passwordTwo);
-    if(!validateInput(passwordOne, 3)){
-        showInvalidPasswordAlert();
-        e.preventDefault();
-    }
-
-    if(!matchingPasswords){
+    }else if(!passwordsMatch){
         showPasswordMismatch();
-        e.preventDefault();
+    }else if(!validPassword){
+        showInvalidPasswordAlert();
+    }else{
+        let formBody = {
+            userName,
+            passwordOne,
+            passwordTwo
+        }
+        fetch("http://localhost:5050/MaximusBank/register", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': ['text/plain', 'text/html'],
+            },
+            body: JSON.stringify(formBody),
+        }).then( res => {
+            if(res.status === 401){
+                return res.text()
+            }else if(res.status === 200 && res.redirected){
+                window.location.href = res.url;
+            }
+            return "Registration Successful Successful";
+        }).then( text => console.log(text) );
     }
-});
 
-// Check If Passwords Match
-function passwordsMatch(passwordA, passwordB){
-    return passwordA === passwordB;
+    return false;
+
 }
 
 

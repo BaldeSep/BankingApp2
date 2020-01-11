@@ -11,7 +11,7 @@ let alertPassword = document.getElementById("alert-invalid-password");
 
 
 
-function handleSubmit(e){
+function handleSubmit(){
 	let userName = inputUserName.value.trim();
     let password = inputPassword.value.trim();
 
@@ -19,10 +19,8 @@ function handleSubmit(e){
     let validPassword =  verify(password, 3);
     if(!validUserName){
         showInvalidUserName();
-        e.preventDefault();
     }else if(!validPassword){
         showInvalidPassword();
-        e.preventDefault();
     }else{
 	    fetch("http://localhost:5050/MaximusBank/login", {
 	    	method: "POST",
