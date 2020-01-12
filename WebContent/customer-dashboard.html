@@ -25,7 +25,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="" method="POST" id="depsoit-form">
+              <form method="POST" id="depsoit-form">
                 <div class="form-group">
                     <input type="number" class="form-control" name="deposit" id="transaction-deposit" placeholder="Enter $ Amount...">
                 </div>
@@ -128,7 +128,7 @@
         <div class="jumbotron text-center">
             <h1 class="display-4">Welcome To Maximus Bank</h1>
             <p class="lead">How Can We Assist You Today?</p>
-            <form id="search-accounts-form">
+            <form  onSubmit="return getAccounts();" id="search-accounts-form">
                 <div class="form-group">
                     <input type="text" class="form-control" name="account" id="search-accounts" placeholder="Enter Bank Account Number Here...">
                 </div>

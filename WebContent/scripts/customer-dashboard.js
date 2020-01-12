@@ -1,30 +1,4 @@
-// Dummy Data To Simulate Get request
-let accounts = [
-    {
-        accountNumber: 50,
-        balance: 300
-    },
-    {
-        accountNumber: 51,
-        balance: 400
-    },
-    {
-        accountNumber: 52,
-        balance: 500
-    },
-    {
-        accountNumber: 53,
-        balance: 600
-    },
-    {
-        accountNumber: 54,
-        balance: 300
-    },
-    {
-        accountNumber: 100,
-        balance: 450.98
-    }
-];
+let accounts = [];
 
 // Get Table Accounts Body
 let accountsTableBody = document.getElementById("table-accounts");
@@ -58,43 +32,51 @@ accountsTableBody.addEventListener("click", e => {
     modalAccountDisplay.innerText = selectedAccountNumber;
 });
 
-// Add Event Listener to search for account by number
-formGetAccount.addEventListener("submit", e => {
-    e.preventDefault();
-    let accountNumber = Number(inputAccountNumber.value);
-    let account = accounts.find( a => a.accountNumber === accountNumber );
-    if(account){
-        accountsTableBody.innerHTML = `
-            <tr id=${account.accountNumber}>
-                <td>${account.accountNumber}<td>
-                <td>${account.balance}<td>
-            </tr>
-        `;
-    }else{
-        console.log("Could Not Find Accout");
-    }
-});
+// Function For Getting Specific Account From Server
+function getAccounts(){
+    fetch("http://localhost:5050/MaximusBank/bankaccounts")
+    .then( res => res.json() )
+    .then( accounts => {
+            let accountNumber = inputAccountNumber.value;
+            let account = accounts.find( a => a.accountNumber == accountNumber );
+            if(account){
+                accountsTableBody.innerHTML = `
+                    <tr id=${account.accountNumber}>
+                        <td>${account.accountNumber}<td>
+                        <td>${account.balance}<td>
+                    </tr>
+                `
+            }else{
+                alert("Could Not Find Account");
+            }        
+    });
+    return false;
+}
 
 
 // When the window loads this simulates a request to get all of the logged in user's 
 // accounts and displays them within a table
 window.onload = loadAccounts;
 function loadAccounts(){
-    if(accounts.length > 0){
-        let tableOutput = ``;
-        let selectOutput = `<option selected>Source Account Number</option>`;
-        accounts.forEach( account => {
-            tableOutput += `
-                <tr id=${account.accountNumber}>
-                    <td>${account.accountNumber}</td>
-                    <td>$${account.balance}</td>
-                </tr>
-            `;
-            selectOutput += `
-                <option value="${account.accountNumber}">${account.accountNumber}</option>
-            `;
-        });
-        accountsTableBody.innerHTML = tableOutput;
-        modalSelectSourceAccount.innerHTML = selectOutput;
-    }
+    fetch("http://localhost:5050/MaximusBank/bankaccounts")
+        .then( res => res.json() )
+        .then( accounts => {
+            accounts.forEach( account => {
+                let tableOutput = ``;
+                let selectOutput = `<option selected>Source Account Number</option>`;
+                accounts.forEach( account => {
+                    tableOutput += `
+                        <tr id=${account.accountNumber}>
+                            <td>${account.accountNumber}</td>
+                            <td>$${account.balance}</td>
+                        </tr>
+                    `;
+                    selectOutput += `
+                        <option value="${account.accountNumber}">${account.accountNumber}</option>
+                    `;
+                });
+                accountsTableBody.innerHTML = tableOutput;
+                modalSelectSourceAccount.innerHTML = selectOutput;
+            }  )
+        } )
 }
