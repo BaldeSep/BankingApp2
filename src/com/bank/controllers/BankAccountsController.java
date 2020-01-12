@@ -21,13 +21,13 @@ import com.google.gson.Gson;
  * Servlet implementation class ViewAllAccountsController
  */
 @WebServlet("/bankaccounts")
-public class ViewAllAccountsController extends HttpServlet {
+public class BankAccountsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ViewAllAccountsController() {
+    public BankAccountsController() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,7 +42,7 @@ public class ViewAllAccountsController extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		if(session == null) {
 			response.setStatus(401);
-			response.sendRedirect("/");
+			response.sendRedirect(request.getContextPath() + "/");
 		}else {
 			BankAccountViewBO accountViewBO = new BankAccountViewBOImpl();
 			User user = (User) session.getAttribute("user");

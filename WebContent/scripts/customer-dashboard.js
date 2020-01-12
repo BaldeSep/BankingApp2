@@ -18,6 +18,7 @@ let formGetAccount = document.getElementById("search-accounts-form");
 // Get Input From Get Account Form to search
 let inputAccountNumber = document.getElementById("search-accounts");
 
+
 // If the user clicks on an account then this will save the account number
 // within memory
 let selectedAccountNumber;
@@ -79,4 +80,22 @@ function loadAccounts(){
                 modalSelectSourceAccount.innerHTML = selectOutput;
             }  )
         } )
+}
+
+// Apply For Bank Account
+function applyForAccount(){
+    let application = {
+        initialBalance: document.getElementById("initial-balance").value,
+    }
+    fetch("http://localhost:5050/MaximusBank/apply", {
+        method: "POST",
+        header: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/plain'
+        },
+        body: JSON.stringify(application)
+    })
+        .then( res => res.text() )
+        .then( text => alert(text) );
+    return false;
 }
