@@ -1,4 +1,4 @@
-package com.bank.controllers;
+package com.bank.controllers.bankaccounts;
 
 import java.io.IOException;
 import java.io.PrintWriter;

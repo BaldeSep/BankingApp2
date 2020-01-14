@@ -1,4 +1,4 @@
-package com.bank.controllers;
+package com.bank.controllers.bankaccounts;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +38,6 @@ public class BankAccountsController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<BankAccount> accounts;
 		Gson gson = new Gson();
-		
 		HttpSession session = request.getSession(false);
 		if(session == null) {
 			response.setStatus(401);

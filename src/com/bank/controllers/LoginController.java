@@ -49,9 +49,6 @@ public class LoginController extends HttpServlet {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", validatedUser);
 				response.sendRedirect(request.getContextPath() + "/dashboard");
-			}else {
-				response.setStatus(401);
-				out.print("User Could Not Be Found!!!");
 			}
 		}catch(BusinessException e) {
 			response.setStatus(401);
