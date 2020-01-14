@@ -9,20 +9,23 @@ import com.bank.bo.impl.BankAccountTransactionBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.BankAccount;
 
-class BankAccountDepositTest {
+class BankAccountWithdrawalTest {
 
 	@Test
 	void test() {
-		BankAccountTransactionBO  transactionBO = new BankAccountTransactionBOImpl();
-		BankAccount account = new BankAccount(51, "balde", 130, null);
-		BankAccount updatedAccount = null;
+		BankAccountTransactionBO transBO = new BankAccountTransactionBOImpl();
+		BankAccount account = new BankAccount();
+		account.setAccountNumber(100);
+		BankAccount updatedAccount = null; 
 		try {
-			updatedAccount = transactionBO.makeDeposit(account, 30.00);
+			updatedAccount =  transBO.makeWithdrawal(account, -10);
 		} catch (BusinessException e) {
 			System.out.println(e.getMessage());
 		}
+		
 		System.out.println(updatedAccount);
 		assertEquals(false, updatedAccount == null);
+		
 	}
 
 }

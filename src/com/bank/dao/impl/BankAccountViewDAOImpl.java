@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.bank.dao.BankAccountViewDAO;
@@ -40,8 +41,28 @@ public class BankAccountViewDAOImpl implements BankAccountViewDAO {
 
 	@Override
 	public BankAccount getBankAccount(int accountNumber) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		BankAccount account = null;
+		try(Connection conn = OracleDBConnection.getConnection()){
+			String sql = "Select account_number, holder, balance, date_created From BankAccounts Where account_number = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setInt(1, accountNumber);
+			ResultSet results = statement.executeQuery();
+			if(results.next()) {
+				account = new BankAccount();
+				String holder = results.getString("holder");
+				double balance = results.getDouble("balance");
+				Date dateCreated = results.getDate("date_created");
+				account.setAccountNumber(accountNumber);
+				account.setBalance(balance);
+				account.setHolder(holder);
+				account.setDateCreated(dateCreated);
+			}else {
+				throw new BusinessException("Account Could Not Be Found");
+			}
+		}catch(SQLException | ClassNotFoundException e) {
+			throw new BusinessException("There Was An Internal Error");
+		}
+		return account;
 	}
 
 }

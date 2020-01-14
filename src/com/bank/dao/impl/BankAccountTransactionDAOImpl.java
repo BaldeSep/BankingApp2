@@ -15,9 +15,18 @@ public class BankAccountTransactionDAOImpl implements BankAccountTransactionDAO 
 
 	@Override
 	public BankAccount makeDeposit(BankAccount account, double amount) throws BusinessException {
+		return makeTransaction(account, amount, "makeDeposit");
+	}
+
+	@Override
+	public BankAccount makeWithdrawal(BankAccount account, double amount) throws BusinessException {
+		return makeTransaction(account, amount, "makeWithdrawal");
+	}
+	
+	private BankAccount makeTransaction(BankAccount account, double amount, String procedure) throws BusinessException {
 		BankAccount updatedAccount = null;
 		try(Connection conn = OracleDBConnection.getConnection()){
-			String sql = "{call makedeposit(?,?,?,?,?,?)}";
+			String sql = "{call" + procedure + "(?,?,?,?,?,?)}";
 			CallableStatement statement = conn.prepareCall(sql);
 			statement.setInt(1, account.getAccountNumber());
 			statement.setDouble(2, amount);
@@ -35,12 +44,6 @@ public class BankAccountTransactionDAOImpl implements BankAccountTransactionDAO 
 			throw new BusinessException("Sorry There Was An Internal Server Error");
 		}
 		return updatedAccount;
-	}
-
-	@Override
-	public BankAccount makeWithdrawal(BankAccount account, double amount) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

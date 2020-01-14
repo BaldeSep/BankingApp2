@@ -16,23 +16,20 @@ import com.bank.to.Transaction;
 import com.google.gson.Gson;
 
 /**
- * Servlet implementation class BankAccountDepositController
+ * Servlet implementation class BankAccountWithdrawalController
  */
-@WebServlet("/deposit")
-public class BankAccountDepositController extends HttpServlet {
+@WebServlet("/withdrawal")
+public class BankAccountWithdrawalController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public BankAccountDepositController() {
+    public BankAccountWithdrawalController() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
-	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if(session != null) {
@@ -43,7 +40,7 @@ public class BankAccountDepositController extends HttpServlet {
 			double amount = transaction.getAmount();
 			BankAccountTransactionBO bankBO = new BankAccountTransactionBOImpl();
 			try {
-				BankAccount updatedAccount = bankBO.makeDeposit(account, amount);
+				BankAccount updatedAccount = bankBO.makeWithdrawal(account, amount);
 				if(updatedAccount != null) {
 					String jsonAccount = gson.toJson(updatedAccount);
 					response.setContentType("application/json");

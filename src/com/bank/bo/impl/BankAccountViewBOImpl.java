@@ -17,8 +17,7 @@ public class BankAccountViewBOImpl implements BankAccountViewBO {
 
 	@Override
 	public BankAccount getBankAccount(int accountNumber)throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return new BankAccountViewDAOImpl().getBankAccount(accountNumber);
 	}
 
 }
