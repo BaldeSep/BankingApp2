@@ -12,7 +12,9 @@ import com.bank.bo.MoneyTransferBO;
 import com.bank.bo.impl.MoneyTransferBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.MoneyTransfer;
+import com.bank.to.MoneyTransferJSONRequest;
 import com.bank.to.User;
+import com.bank.to.types.MoneyTransferStatus;
 import com.google.gson.Gson;
 
 /**
@@ -62,7 +64,38 @@ public class MoneyTransferController extends HttpServlet {
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		
+		HttpSession session = request.getSession(false);
+		if(session != null) {
+			Gson gson = new Gson();
+			MoneyTransferJSONRequest transfer = gson.fromJson(request.getReader(), MoneyTransferJSONRequest.class);
+			MoneyTransferBO transferBO = new MoneyTransferBOImpl();
+			MoneyTransferStatus status = MoneyTransferStatus.fromInt(transfer.getStatus());
+			int transferId = transfer.getTransferId();
+			MoneyTransfer updatedTransfer = null;
+			try {
+				switch(status) {
+				case Accepted:
+					updatedTransfer = transferBO.acceptMoneyTransfer(transferId);
+					break;
+				case Rejected:
+					updatedTransfer = transferBO.rejectMoneyTransfer(transferId);
+					break;
+				default:
+					break;
+				}
+				if(updatedTransfer != null) {
+					String jsonTransfer = gson.toJson(updatedTransfer);
+					response.setContentType("application/json");
+					response.setStatus(200);
+					response.getWriter().print(jsonTransfer);
+				}else {
+					throw new BusinessException("Money Transfer Could Not Be Processed");
+				}
+			}catch(BusinessException e) {
+				response.setStatus(500);
+				response.getWriter().print(e.getMessage());
+			}
+		}
 	}
 
 }
