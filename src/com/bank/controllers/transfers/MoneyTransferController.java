@@ -1,6 +1,8 @@
 package com.bank.controllers.transfers;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +15,7 @@ import com.bank.bo.impl.MoneyTransferBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.MoneyTransfer;
 import com.bank.to.MoneyTransferJSONRequest;
+import com.bank.to.MoneyTransferJSONResponse;
 import com.bank.to.User;
 import com.bank.to.types.MoneyTransferStatus;
 import com.google.gson.Gson;
@@ -33,8 +36,28 @@ public class MoneyTransferController extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		HttpSession session = request.getSession();
+		if(session != null) {
+			User user = (User) session.getAttribute("user");
+			MoneyTransferBO transferBO = new MoneyTransferBOImpl();
+			List<MoneyTransferJSONResponse> transfers = null;
+			try {
+				transfers = transferBO.getMoneyTransfers(user);
+				if(transfers != null) {
+					Gson gson = new Gson();
+					String jsonTransfers = gson.toJson(transfers);
+					response.setContentType("application/json");
+					response.setStatus(200);
+					response.getWriter().print(jsonTransfers);
+				}else {
+					throw new BusinessException("The MoneyTransfers Could Not Be Retrieved");
+				}
+			} catch (BusinessException e) {
+				response.setContentType("text/plain");
+				response.setStatus(500);
+				response.getWriter().print(e.getMessage());
+			}
+		}
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

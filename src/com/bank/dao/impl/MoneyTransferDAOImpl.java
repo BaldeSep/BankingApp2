@@ -5,12 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.bank.dao.MoneyTransferDAO;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.BankAccount;
 import com.bank.to.MoneyTransfer;
+import com.bank.to.MoneyTransferJSONResponse;
 import com.bank.to.User;
 import com.bank.to.types.MoneyTransferStatus;
 import com.bank.util.OracleDBConnection;
@@ -20,8 +22,45 @@ import jdk.nashorn.internal.codegen.CompilerConstants.Call;
 public class MoneyTransferDAOImpl implements MoneyTransferDAO {
 
 	@Override
-	public List<MoneyTransfer> getMoneyTransfers(User user) throws BusinessException {
-		return null;
+	public List<MoneyTransferJSONResponse> getMoneyTransfers(User user) throws BusinessException {
+		List<MoneyTransferJSONResponse> transfers = null;
+		try(Connection conn = OracleDBConnection.getConnection()){
+			String getTrans = "Select transfer_id, source_account, source_holder, destination_account ,destination_holder, amount, status "
+					+ "From moneytransfers "
+					+ "Where destination_holder = ?";
+			PreparedStatement statement = conn.prepareStatement(getTrans);
+			statement.setString(1, user.getUserName());
+			ResultSet results = statement.executeQuery();
+			int sourceAccount, destinationAccount, status, transferId;
+			double amount;
+			String sourceHolder, destinationHolder;
+			MoneyTransferJSONResponse response;
+			while(results.next()) {
+				transferId = results.getInt("transfer_id");
+				sourceAccount = results.getInt("source_account");
+				sourceHolder = results.getString("source_holder");
+				destinationAccount = results.getInt("destination_account");
+				destinationHolder = results.getString("destination_holder");
+				amount = results.getDouble("amount");
+				status = results.getInt("status");
+				response = new MoneyTransferJSONResponse(
+						transferId, 
+						sourceAccount, 
+						sourceHolder, 
+						destinationAccount, 
+						destinationHolder, 
+						amount, 
+						status);
+				if(transfers == null) {
+					transfers = new ArrayList<>();
+				}
+				transfers.add(response);
+			}
+		}catch(SQLException | ClassNotFoundException e) {
+			throw new BusinessException("An Internal Error Occured");
+		}
+			
+		return transfers;
 	}
 
 	@Override

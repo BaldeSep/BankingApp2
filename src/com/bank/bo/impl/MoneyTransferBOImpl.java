@@ -11,15 +11,15 @@ import com.bank.dao.impl.MoneyTransferDAOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.BankAccount;
 import com.bank.to.MoneyTransfer;
+import com.bank.to.MoneyTransferJSONResponse;
 import com.bank.to.User;
 import com.bank.util.OracleDBConnection;
 
 public class MoneyTransferBOImpl implements MoneyTransferBO {
 
 	@Override
-	public List<MoneyTransfer> getMoneyTransfers(User user) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MoneyTransferJSONResponse> getMoneyTransfers(User user) throws BusinessException {
+		return new MoneyTransferDAOImpl().getMoneyTransfers(user);
 	}
 
 	@Override
