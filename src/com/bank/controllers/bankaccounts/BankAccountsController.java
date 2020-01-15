@@ -29,7 +29,6 @@ public class BankAccountsController extends HttpServlet {
      */
     public BankAccountsController() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

@@ -27,7 +27,6 @@ public class BankAccountWithdrawalController extends HttpServlet {
      */
     public BankAccountWithdrawalController() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

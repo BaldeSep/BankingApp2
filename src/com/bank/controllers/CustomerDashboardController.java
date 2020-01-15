@@ -30,7 +30,6 @@ public class CustomerDashboardController extends HttpServlet {
      */
     public CustomerDashboardController() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -42,16 +41,8 @@ public class CustomerDashboardController extends HttpServlet {
 		if(session != null) {
 			response.sendRedirect(request.getContextPath() + "/customer-dashboard.html");
 		}else {
-			response.sendRedirect("/login ");
+			response.sendRedirect(request.getContextPath() + "/");
 		}
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
 	}
 
 }
