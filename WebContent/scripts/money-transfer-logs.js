@@ -54,22 +54,29 @@ let tableTransactions = document.getElementById("table-transfers-body");
 window.onload = loadLogs;
 
 function loadLogs(){
-	let output = ``;
-	// Replace this array with a fetch call to the database
-	trans.forEach( log => {
-		output += `
-			<tr>
-				<td>${log.transactionId}</td>
-				<td>${log.sourceAccount}</td>
-				<td>${log.sourceHolder}</td>
-				<td>${log.destinationAccount}</td>
-				<td>${log.destinationHolder}</td>
-				<td>${log.amount}</td>
-				<td>${log.date}</td>
-			</tr>
-		`;
-	})
-	tableTransactions.innerHTML = output;
+	fetch("http://localhost:5050/MaximusBank/transferlogs")
+		.then( res => res.json() )
+		.then( data => {
+			if(data.hasOwnProperty("message")){
+				alert(message);
+			}else{
+				let output = ``;
+				data.forEach( log => {
+					output += `
+						<tr>
+							<td>${log.transactionId}</td>
+							<td>${log.sourceAccount}</td>
+							<td>${log.sourceHolder}</td>
+							<td>${log.destinationAccount}</td>
+							<td>${log.destinationHolder}</td>
+							<td>${log.amount}</td>
+							<td>${log.dateOfPost}</td>
+						</tr>
+					`;
+				});
+				tableTransactions.innerHTML = output;
+			}
+		} )
 }
 
 
