@@ -13,6 +13,9 @@ public class BankAccountApplicationBOImpl implements BankAccountApplicationBO {
 
 	@Override
 	public boolean applyForBankAccount(User user, double initialBalance) throws BusinessException {
+		if(initialBalance < 0) {
+			throw new BusinessException("Initial Balance Needs To Be Greater Than $0.00");
+		}
 		return new BankAccountApplicationDAOImpl().applyForBankAccount(user, initialBalance);
 	}
 
