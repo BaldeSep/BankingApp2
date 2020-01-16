@@ -3,6 +3,7 @@ package com.bank.controllers.bankaccounts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +21,7 @@ import com.bank.to.Application;
 import com.bank.to.BankAccount;
 import com.bank.to.MessageResponse;
 import com.bank.to.User;
+import com.bank.to.types.ApplicationStatus;
 import com.bank.to.types.UserType;
 import com.google.gson.Gson;
 
@@ -96,7 +98,60 @@ public class BankAccountApplicationController extends HttpServlet {
 	
 	// For Accepting and Rejecting Accounts
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		
+		HttpSession session = request.getSession(false);
+		if(session != null) {
+			User user = (User) session.getAttribute("user");
+			if(user != null && user.getUserType() == UserType.Employee) {
+				Gson gson = new Gson();
+				response.setContentType("application/json");
+				response.setContentType("application/json");
+				Map<String, String[]> req = request.getParameterMap();
+				int applicationId = Integer.parseInt(req.get("applicationId")[0]);
+				ApplicationStatus status = ApplicationStatus.fromInt( Integer.parseInt( req.get("status")[0] ) );
+				BankAccountApplicationBO applicationBO = new BankAccountApplicationBOImpl();
+				try {
+					BankAccount approvedAccount = null;
+					boolean accountRejected = false;
+					if(status == null) {
+						throw new BusinessException("Invalid Status Must Be Between 0 and 2");
+					}
+					switch(status) {
+					case Accepted:
+						approvedAccount = applicationBO.approveBankAccount(applicationId);
+						if(approvedAccount != null) {
+							String jsonAccount = gson.toJson(approvedAccount);
+							response.setStatus(200);
+							response.getWriter().print(jsonAccount);
+						}else {
+							throw new BusinessException("Application Could Not Be Found");
+						}
+						break;
+					case Denied:
+						accountRejected  = applicationBO.denyBankAccount(applicationId);
+						if(accountRejected) {
+							String message = gson.toJson(new MessageResponse("Account Successfully Rejected"));
+							response.setStatus(200);
+							response.getWriter().print(message);
+						}else {
+							throw new BusinessException("Application Could Not Be Rejected");
+						}
+						break;
+					default:
+						throw new BusinessException("Could Not Process Application");
+					}
+					
+				}catch(BusinessException e) {
+					response.setStatus(500);
+					String message = gson.toJson(new MessageResponse(e.getMessage()));
+					response.getWriter().print(message);
+				}
+			}else {
+				session.invalidate();
+				response.sendRedirect(request.getContextPath() + "/");
+			}
+		}else {
+			response.sendRedirect(request.getContextPath() + "/");
+		}
 	}
 
 }
