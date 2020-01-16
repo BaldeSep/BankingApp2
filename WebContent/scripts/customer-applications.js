@@ -67,19 +67,29 @@ tableApplicationBody.addEventListener('click', e => {
 
 // Load All Dummy Data At Start 
 // Simulation of initial get on loading the page.
-window.onload = () => {
-    let output = ``;
-    applications.forEach( app => {
-        output += `
-            <tr class="rejected" id="application-id-${app.id}">
-                <td>${app.id}</td>
-                <td>${app.holder}</td>
-                <td>$${app.amount}</td>
-                <td>${app.date}</td>
-                <td> <input type="radio" class="accept" name="accept-reject=${app.id}"></td>
-                <td> <input type="radio" class="reject" name="accept-reject=${app.id}" checked></td>
-            </tr>
-        `
-    } );
-    tableApplicationBody.innerHTML = output;
+window.onload = loadApplications;
+
+function loadApplications(){
+	fetch("http://localhost:5050/MaximusBank/apply")
+		.then( res => res.json() )
+		.then( data => {
+			if(data.hasOwnProperty("message")){
+				alert(data.message);
+			}else{
+				let output = ``;
+				data.forEach( app => {
+					output += `
+						 <tr class="rejected" id="application-id-${app.applicationId}">
+			                <td>${app.applicationId}</td>
+			                <td>${app.applicant}</td>
+			                <td>$${app.initialBalance}</td>
+			                <td>${app.dateApplied.date.year}-${app.dateApplied.date.month}-${app.dateApplied.date.day}</td>
+			                <td> <input type="radio" class="accept" name="accept-reject=${app.applicationId}"></td>
+			                <td> <input type="radio" class="reject" name="accept-reject=${app.applicationId}" checked></td>
+						</tr>
+					`
+				});
+				tableApplicationBody.innerHTML = output;
+			}
+		});
 } 
