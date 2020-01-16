@@ -8,7 +8,7 @@
     <!-- For Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <title>Welcome</title>
+    <title>Applications</title>
 </head>
 <body>
     <!-- Navbar -->
@@ -27,7 +27,7 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                               <a class="dropdown-item" href="deposit-withdrawal-logs.html">Deposits & Withdrawals</a>
-                              <a class="dropdown-item" href="money-transfer-logs.html">Money Transfer</a>
+                              <a class="dropdown-item" href="#">Money Transfer</a>
                             </div>
                           </div>
                     </li>
@@ -36,7 +36,7 @@
                          class="nav-link btn btn-light">Applications</a>
                     </li>
                     <li class="nav-item m-1">
-						<form action="logout" method="POST">
+                        <form action="logout" method="POST">
                             <button type="submit" class="btn btn-outline-light nav-link">Sign Out</button>
                         </form>
                     </li>
@@ -45,45 +45,26 @@
         </div>        
     </nav>
 
-    <div class="container-md">
-        <div class="jumbotron text-center">
-            <h2 class="display-4">Customer Accounts</h2>
-            <hr>
-            <form onSubmit="return handleGettingAccounts();" id="view-all-accounts-form">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="account" id="view-all-accounts" placeholder="Enter User Name Here...">
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="form-control btn btn-dark" value="View All Accounts">
-                </div>
-            </form>
-            <hr>
-            <form onSubmit="return handleGettingAccount();" id="view-account-form">
-                <div class="form-group">
-                    <input type="number" class="form-control" id="view-account-input" placeholder="Enter The Account Number Here...">
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="View An Account" class="form-control btn btn-dark">
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <div class="container-md d-none" id="display-accounts-table-wrapper">
-        <h2 class="display-4">Accounts For User: <span id="display-user-name">userName</span></h2>
-        <table class="table table-dark table-hover">
+    <div class="container-md mt-3">
+        <h1 class="display-4 text-center mb-4">Money Transfers</h1>
+        <table class="table table-dark">
             <thead>
                 <tr>
-                    <th>Account Number</th>
-                    <th>Holder</th>
-                    <th>Balance</th>
+                    <th>Transaction Id</th>
+                    <th>Source Account</th>
+                    <th>Source Holder</th>
+                    <th>Destination Account</th>
+                    <th>Destination Holder</th>
+                    <th>Amount</th>
+                    <th>Date</th>
                 </tr>
             </thead>
-            <tbody id="display-accounts-table-body">
+            <tbody id="table-transfers-body">
+            	
             </tbody>
         </table>
     </div>
-
 
     <!-- Scripts For Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -91,7 +72,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>  
     <!-- For Icons With Font Awesome -->
     <script src="https://kit.fontawesome.com/554f0629d2.js" crossorigin="anonymous"></script>  
-    <!-- For Customer Scripts -->
-    <script src="scripts/employee-dashboard.js"></script>
+    <!-- Custom Script for Customer Applications -->
+    <script src="scripts/money-transfer-logs.js"></script>
 </body>
 </html>

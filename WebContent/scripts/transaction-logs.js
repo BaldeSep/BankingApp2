@@ -50,7 +50,7 @@ window.onload = loadLogs;
 
 function loadLogs(){
 	let output = ``;
-	// Replace this array with a feth call to the database
+	// Replace this array with a fetch call to the database
 	trans.forEach( log => {
 		output += `
 			<tr>
