@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.bank.bo.MoneyTransferBO;
 import com.bank.bo.impl.MoneyTransferBOImpl;
 import com.bank.exceptions.BusinessException;
+import com.bank.to.MessageResponse;
 import com.bank.to.MoneyTransfer;
 import com.bank.to.MoneyTransferJSONRequest;
 import com.bank.to.MoneyTransferJSONResponse;
@@ -39,12 +40,12 @@ public class MoneyTransferController extends HttpServlet {
 		HttpSession session = request.getSession();
 		if(session != null) {
 			User user = (User) session.getAttribute("user");
+			Gson gson = new Gson();
 			MoneyTransferBO transferBO = new MoneyTransferBOImpl();
 			List<MoneyTransferJSONResponse> transfers = null;
 			try {
 				transfers = transferBO.getMoneyTransfers(user);
 				if(transfers != null) {
-					Gson gson = new Gson();
 					String jsonTransfers = gson.toJson(transfers);
 					response.setContentType("application/json");
 					response.setStatus(200);
@@ -53,9 +54,10 @@ public class MoneyTransferController extends HttpServlet {
 					throw new BusinessException("The MoneyTransfers Could Not Be Retrieved");
 				}
 			} catch (BusinessException e) {
-				response.setContentType("text/plain");
+				response.setContentType("application/json");
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
-				response.getWriter().print(e.getMessage());
+				response.getWriter().print(message);
 			}
 		}
 	}
@@ -73,15 +75,16 @@ public class MoneyTransferController extends HttpServlet {
 				if(addedTransfer == null) {
 					throw new BusinessException("Transfer Could Not Be Completed");
 				}else {
-					String transferJson = gson.toJson(addedTransfer);
+					String message = gson.toJson(new MessageResponse("Transfer Completed"));
 					response.setStatus(200);
 					response.setContentType("application/json");
-					response.getWriter().print(transferJson);
+					response.getWriter().print(message);
 				}
 			} catch (BusinessException e) {
-				response.setContentType("text/plain");
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
+				response.setContentType("application/json");
 				response.setStatus(500);
-				response.getWriter().print(e.getMessage());
+				response.getWriter().print(message);
 			}
 		}
 	}

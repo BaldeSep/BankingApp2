@@ -12,6 +12,7 @@ import com.bank.bo.BankAccountTransactionBO;
 import com.bank.bo.impl.BankAccountTransactionBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.BankAccount;
+import com.bank.to.MessageResponse;
 import com.bank.to.Transaction;
 import com.google.gson.Gson;
 
@@ -45,17 +46,18 @@ public class BankAccountDepositController extends HttpServlet {
 			try {
 				BankAccount updatedAccount = bankBO.makeDeposit(account, amount);
 				if(updatedAccount != null) {
-					String jsonAccount = gson.toJson(updatedAccount);
+					String message = gson.toJson(new MessageResponse(String.valueOf(updatedAccount.getBalance())));
 					response.setContentType("application/json");
 					response.setStatus(200);
-					response.getWriter().print(jsonAccount);
+					response.getWriter().print(message);
 				}else {
 					throw new BusinessException("Sorry The Deposit Could Not Be Completed");
 				}
 			} catch (BusinessException e) {
-				response.setContentType("text/plain");
+				response.setContentType("application/json");;
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
-				response.getWriter().print(e.getMessage());
+				response.getWriter().print(message);
 			}
 		}else {
 			response.sendRedirect( request.getContextPath() +  "/");

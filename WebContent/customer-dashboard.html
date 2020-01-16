@@ -25,17 +25,17 @@
               </button>
             </div>
             <div class="modal-body">
-              <form method="POST" id="depsoit-form">
+              <form onSubmit="return makeDeposit();" id="depsoit-form">
                 <div class="form-group">
-                    <input type="number" class="form-control" name="deposit" id="transaction-deposit" placeholder="Enter $ Amount...">
+                    <input type="number" step="any" class="form-control" name="deposit" id="transaction-deposit" placeholder="Enter $ Amount...">
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-dark btn-block" value="Deposit" id="deposit">
                 </div>
               </form>
-              <form action="" method="POST" id="withdrawl-form">
+              <form onSubmit="return makeWithdrawal();"  id="withdrawl-form">
                 <div class="form-group">
-                    <input type="number" class="form-control" name="withdrawl" id="transaction-withdrawal" placeholder="Enter $ Amount...">
+                    <input type="number" step="any" class="form-control" name="withdrawl" id="transaction-withdrawal" placeholder="Enter $ Amount...">
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-block btn-dark" value="Withdrawal" id="withdrawal">
@@ -57,7 +57,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="" id="money-transfer-form">
+              <form onSubmit="return postMoneyTransfer();" id="money-transfer-form">
                   <div class="form-group">
                       <select name="post-transfer-source" id="post-transfer-source" class="custom-select">
                       </select>

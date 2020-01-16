@@ -72,22 +72,39 @@ btnProcessTransfers.addEventListener("click", e => {
 });
 
 // When Page Loads Display All Of the Money Transfers Related to the User
-window.onload = () => {
+window.onload = loadTransfers;
+	
+function loadTransfers(){
     let output = ``;
-    transfers.forEach( transfer => {
-        output += `
-            <tr data-state="pending" data-id="${transfer.id}">
-                <td>${transfer.id}</td>
-                <td>${transfer.srcAccount}</td>
-                <td>${transfer.destAccount}</td>
-                <td>${transfer.amount}</td>
-                <td>${transfer.date}</td>
-                <td>${transfer.status}</td>
-                <td><input  type="radio" data-action="accept" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== "Pending" ? 'disabled' : '' } ></td>
-                <td><input  type="radio" data-action="reject" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== "Pending" ? 'disabled' : '' }></td>
-            </tr>
-        `;
-    } );
-    tableBodyTransfers.innerHTML = output;
+    fetch("http://localhost:5050/MaximusBank/transfers")
+    	.then( res => res.json() )
+    	.then( data => {
+    		if(data.hasOwnProperty("message")){
+    			alert("message");
+    		}else{
+    			data.forEach( transfer => {
+    				let status;
+    				for(let prop in Status){
+    					if(transfer.status == Status[prop]){
+    						status = prop;
+    					}
+    				}
+					 output += `
+				            <tr data-state="pending" data-id="${transfer.id}">
+				                <td>${transfer.transferId}</td>
+				                <td>${transfer.sourceAccount}</td>
+				                <td>${transfer.destinationAccount}</td>
+				                <td>${transfer.amount}</td>
+				                <td>${ status  }</td>
+				                <td><input  type="radio" data-action="accept" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== Status.Pending ? 'disabled' : '' } ></td>
+				                <td><input  type="radio" data-action="reject" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== Status.Pending ? 'disabled' : '' }></td>
+				            </tr>
+				        `;
+					 tableBodyTransfers.innerHTML = output;
+    			})
+    		}
+    	});
+    return false;
 }
 
+const Status = Object.freeze({"Pending": 1, "Accepted": 2, "Rejected": 0});
