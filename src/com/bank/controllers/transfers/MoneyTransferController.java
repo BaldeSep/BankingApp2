@@ -110,16 +110,18 @@ public class MoneyTransferController extends HttpServlet {
 					break;
 				}
 				if(updatedTransfer != null) {
-					String jsonTransfer = gson.toJson(updatedTransfer);
+					String message = gson.toJson(new MessageResponse("Transfer Processed"));
 					response.setContentType("application/json");
 					response.setStatus(200);
-					response.getWriter().print(jsonTransfer);
+					response.getWriter().print(message);
 				}else {
 					throw new BusinessException("Money Transfer Could Not Be Processed");
 				}
 			}catch(BusinessException e) {
+				response.setContentType("application/json");
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
-				response.getWriter().print(e.getMessage());
+				response.getWriter().print(message);
 			}
 		}
 	}

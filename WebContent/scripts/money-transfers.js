@@ -63,12 +63,33 @@ tableBodyTransfers.addEventListener("click", e => {
 btnProcessTransfers.addEventListener("click", e => {
     let acceptedTransfers = tableBodyTransfers.querySelectorAll("[data-state=accepted]");
     let rejectedTransfers = tableBodyTransfers.querySelectorAll("[data-state=rejected]");
+    let transfers = [];
     acceptedTransfers.forEach( transfer => {
-        console.log("Processed Transfer: " + transfer.dataset.id);
+    	let transferId = transfer.dataset.id;
+    	transfers.push({ transferId, status: Status.Accepted });
     } );
     rejectedTransfers.forEach( transfer => {
-        console.log("Processed Transfer: " + transfer.dataset.id);
+    	let transferId = transfer.dataset.id;
+    	transfers.push({ transferId, status: Status.Rejected });
     } );
+    if(transfers.length > 0){
+    	transfers.forEach( transfer => {
+    		fetch("http://localhost:5050/MaximusBank/transfers", {
+    			method: "PUT",
+    			header: {
+    				"Content-Type": "application/json",
+    				"Accept" : "application/json"
+    			},
+    			body: JSON.stringify(transfer)
+    		}).then( res => res.json() )
+    			.then( data => {
+    				alert(data.message)
+    			});    		
+    	});
+    	loadTransfers();
+    }else{
+    	alert("Please Make A Selection!!!");
+    }
 });
 
 // When Page Loads Display All Of the Money Transfers Related to the User
@@ -80,7 +101,7 @@ function loadTransfers(){
     	.then( res => res.json() )
     	.then( data => {
     		if(data.hasOwnProperty("message")){
-    			alert("message");
+    			alert(data.message);
     		}else{
     			data.forEach( transfer => {
     				let status;
@@ -90,14 +111,14 @@ function loadTransfers(){
     					}
     				}
 					 output += `
-				            <tr data-state="pending" data-id="${transfer.id}">
+				            <tr data-state="pending" data-id="${transfer.transferId}">
 				                <td>${transfer.transferId}</td>
 				                <td>${transfer.sourceAccount}</td>
 				                <td>${transfer.destinationAccount}</td>
 				                <td>${transfer.amount}</td>
 				                <td>${ status  }</td>
-				                <td><input  type="radio" data-action="accept" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== Status.Pending ? 'disabled' : '' } ></td>
-				                <td><input  type="radio" data-action="reject" name="accept-reject-transfer-${transfer.id}" ${ transfer.status !== Status.Pending ? 'disabled' : '' }></td>
+				                <td><input  type="radio" data-action="accept" name="accept-reject-transfer-${transfer.transferId}" ${ transfer.status !== Status.Pending ? 'disabled' : '' } ></td>
+				                <td><input  type="radio" data-action="reject" name="accept-reject-transfer-${transfer.transferId}" ${ transfer.status !== Status.Pending ? 'disabled' : '' }></td>
 				            </tr>
 				        `;
 					 tableBodyTransfers.innerHTML = output;
