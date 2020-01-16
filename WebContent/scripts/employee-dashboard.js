@@ -68,45 +68,71 @@ let formGetAnAccount = document.getElementById("view-account-form");
 
 // Add Event Listener For The Get All Accounts Form To Check If The User Name Exists
 // Display All The Data If It Does
-formGetAllAccounts.addEventListener("submit", e => {
-    e.preventDefault();// remove for production code
-    let userName = inputGetUserName.value;
-    if(accounts.hasOwnProperty(userName)){
-        populateAccounsTable(accounts[userName]);    
-    }else{
-        console.error("No Accounts Found With That User Name");
-    }
-
-});
+function handleGettingAccounts(){
+    return populateAccountsTable();    
+}
 
 // Add Event Listener to the View Single Account Form.
 // Search Through Accounts We Have To Find the Entered Account Number.
-formGetAnAccount.addEventListener("submit", e => {
-    e.preventDefault(); // Remove from production code
-    let accountNumber = inputGetAnAccount.value;
-    let foundAccount = individualAccounts.find( account => account.accountNumber == accountNumber );
-    if(foundAccount){
-        populateAccounsTable([foundAccount]);
-    }
-});
+function handleGettingAccount(){
+	return populateAccount();
+}
+
+
+function populateAccount(){
+	let accountNumber = inputGetAnAccount.value;
+	fetch(`http://localhost:5050/MaximusBank/bankaccount?accountNumber=${accountNumber}`)
+		.then( res => res.json() )
+		.then( data => {
+			if(data.hasOwnProperty("message")){
+				alert(data.message);
+			}else{
+				let output = `
+					<tr>
+						<td>${data.accountNumber}</td>
+						<td>${data.holder}</td>
+						<td>${data.balance}</td>
+					</tr>
+				`;
+				let userName = data.holder;
+				accountTableBody.innerHTML = output;
+				document.getElementById("display-user-name").innerText = userName;
+				if(accountTableWrapper.classList.contains("d-none")){
+			        accountTableWrapper.classList.remove("d-none");
+			    }
+			}
+		} );
+	return false;
+}
+
 
 // Populate Table With Data If The User Is Found
-function populateAccounsTable(listAccounts){
-    let output = ``;
-    let userName = "";
-    listAccounts.forEach( account => {
-        output += `
-            <tr>
-                <td>${account.accountNumber}</td>
-                <td>${account.holder}</td>
-                <td>${account.balance}</td>
-            </tr>
-        `;
-        userName = account.holder;
-    } );
-    accountTableBody.innerHTML = output
-    document.getElementById("display-user-name").innerText = userName;
-    if(accountTableWrapper.classList.contains("d-none")){
-        accountTableWrapper.classList.remove("d-none");
-    }
+function populateAccountsTable(){
+	let userName = inputGetUserName.value;
+	fetch(`http://localhost:5050/MaximusBank/bankaccounts?user_name=${userName}`)
+		.then( res => res.json() )
+		.then( data => {
+			if(data.hasOwnProperty("message")){
+				alert(data.message);
+			}else{
+				let output = ``;
+				let userName = "";
+				data.forEach( account => {
+					output += `
+			            <tr>
+			                <td>${account.accountNumber}</td>
+			                <td>${account.holder}</td>
+			                <td>${account.balance}</td>
+			            </tr>
+			        `;
+			        userName = account.holder;
+				});
+				accountTableBody.innerHTML = output
+			    document.getElementById("display-user-name").innerText = userName;
+			    if(accountTableWrapper.classList.contains("d-none")){
+			        accountTableWrapper.classList.remove("d-none");
+			    }
+			}
+		}).catch( err => console.log(err) );
+	return false;
 }

@@ -47,7 +47,7 @@
         <div class="jumbotron text-center">
             <h2 class="display-4">Customer Accounts</h2>
             <hr>
-            <form action="" id="view-all-accounts-form">
+            <form onSubmit="return handleGettingAccounts();" id="view-all-accounts-form">
                 <div class="form-group">
                     <input type="text" class="form-control" name="account" id="view-all-accounts" placeholder="Enter User Name Here...">
                 </div>
@@ -56,7 +56,7 @@
                 </div>
             </form>
             <hr>
-            <form action="" id="view-account-form">
+            <form onSubmit="return handleGettingAccount();" id="view-account-form">
                 <div class="form-group">
                     <input type="number" class="form-control" id="view-account-input" placeholder="Enter The Account Number Here...">
                 </div>

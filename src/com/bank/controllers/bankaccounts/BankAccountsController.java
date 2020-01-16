@@ -14,7 +14,9 @@ import com.bank.bo.BankAccountViewBO;
 import com.bank.bo.impl.BankAccountViewBOImpl;
 import com.bank.exceptions.BusinessException;
 import com.bank.to.BankAccount;
+import com.bank.to.MessageResponse;
 import com.bank.to.User;
+import com.bank.to.types.UserType;
 import com.google.gson.Gson;
 
 /**
@@ -30,33 +32,49 @@ public class BankAccountsController extends HttpServlet {
     public BankAccountsController() {
         super();
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<BankAccount> accounts;
-		Gson gson = new Gson();
+	
+	// Used By Employees And Customers To View Accounts For Specific Users
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		HttpSession session = request.getSession(false);
-		if(session == null) {
-			response.setStatus(401);
-			response.sendRedirect(request.getContextPath() + "/");
-		}else {
-			BankAccountViewBO accountViewBO = new BankAccountViewBOImpl();
+		if(session != null) {
 			User user = (User) session.getAttribute("user");
-			try {
-				accounts = accountViewBO.getBankAccounts(user);
-				String accountsJson = gson.toJson(accounts);
-				response.setStatus(200);
+			if(user != null) {
 				response.setContentType("application/json");
-				response.getWriter().print(accountsJson);
-			} catch (BusinessException e) {
-				response.setContentType("text/plain");
-				response.setStatus(500);
-				response.getWriter().print(e.getMessage());
-			}			
+				Gson gson = new Gson();
+				User customer = null;
+				if(user.getUserType() == UserType.Employee) {
+					customer = new User();
+					customer.setUserName(request.getParameter("user_name"));
+				}else if(user.getUserType() == UserType.Customer) {
+					customer = user;
+				}
+				if(customer == null) {
+					session.invalidate();
+					response.sendRedirect(request.getContextPath() + "/");
+				}
+				BankAccountViewBO accountViewBO = new BankAccountViewBOImpl(); 
+				List<BankAccount> accounts = null;
+				try {
+					accounts = accountViewBO.getBankAccounts(customer);
+					if(accounts != null && !accounts.isEmpty()) {
+						String jsonAccounts = gson.toJson(accounts);
+						response.setStatus(200);
+						response.getWriter().print(jsonAccounts);
+					}else {
+						throw new BusinessException("No Valid Accounts Could Be Found");
+					}
+				} catch (BusinessException e) {
+					String message = gson.toJson(new MessageResponse(e.getMessage()));
+					response.setStatus(500);
+					response.getWriter().print(message);
+				}
+			}else {
+				session.invalidate();
+				response.sendRedirect(request.getContextPath() + "/");
+			}
+		}else {
+			response.sendRedirect(request.getContextPath() + "/");
 		}
-		
 	}
 
 }
