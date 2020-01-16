@@ -67,34 +67,27 @@ public class BankAccountApplicationController extends HttpServlet {
 		}
 	}
 	
-	// Used By Employees To View Accounts For Specific Users
+	// Used By Employees To View All Applications
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		HttpSession session = request.getSession(false);
 		if(session != null) {
-			User user = (User) session.getAttribute("user");
-			if(user != null && user.getUserType() == UserType.Employee) {
-				response.setContentType("application/json");
-				Gson gson = new Gson();
-				User customer = gson.fromJson(request.getReader(), User.class);
-				BankAccountViewBO accountViewBO = new BankAccountViewBOImpl(); 
-				List<BankAccount> accounts = null;
-				try {
-					accounts = accountViewBO.getBankAccounts(customer);
-					if(accounts != null && accounts.size() > 0) {
-						String jsonAccounts = gson.toJson(accounts);
-						response.setStatus(200);
-						response.getWriter().print(jsonAccounts);
-					}else {
-						throw new BusinessException("No Valid Accounts Could Be Found");
-					}
-				} catch (BusinessException e) {
-					String message = gson.toJson(new MessageResponse(e.getMessage()));
-					response.setStatus(500);
-					response.getWriter().print(message);
+			Gson gson = new Gson();
+			response.setContentType("application/json");
+			List<Application> appliations = null;
+			BankAccountApplicationBO accountBO = new BankAccountApplicationBOImpl();
+			try {
+				appliations = accountBO.viewApplications();
+				if(appliations != null) {
+					String jsonApplications = gson.toJson(appliations);
+					response.setStatus(200);
+					response.getWriter().print(jsonApplications);
+				}else {
+					throw new BusinessException("No Valid Applications Found");
 				}
-			}else {
-				session.invalidate();
-				response.sendRedirect(request.getContextPath() + "/");
+			} catch (BusinessException e) {
+				response.setStatus(500);
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
+				response.getWriter().print(message);
 			}
 		}else {
 			response.sendRedirect(request.getContextPath() + "/");

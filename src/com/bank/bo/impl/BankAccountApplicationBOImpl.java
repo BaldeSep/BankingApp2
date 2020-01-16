@@ -40,4 +40,9 @@ public class BankAccountApplicationBOImpl implements BankAccountApplicationBO {
 		return null;
 	}
 
+	@Override
+	public List<Application> viewApplications() throws BusinessException {
+		return new BankAccountApplicationDAOImpl().viewApplications();
+	}
+
 }

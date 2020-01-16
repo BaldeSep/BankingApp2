@@ -59,7 +59,7 @@ public class Application {
 	@Override
 	public String toString() {
 		return "Application [applicationId=" + applicationId + ", initialBalance=" + initialBalance + ", dateApplied="
-				+ dateApplied + ", applicant=" + applicant + ", status=" + status + "]";
+				+ dateApplied.toLocalDate() + ", applicant=" + applicant + ", status=" + status + "]";
 	}
 	
 }

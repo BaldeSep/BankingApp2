@@ -12,5 +12,6 @@ public interface BankAccountApplicationBO {
 	BankAccount approveBankAccount(int applicationId) throws BusinessException; 
 	BankAccount denyBankAccount(int applicationId) throws BusinessException;
 	List<Application> viewApplications(User user) throws BusinessException;
+	List<Application> viewApplications() throws BusinessException;
 	Application viewApplication(int applicationId) throws BusinessException;
 }
