@@ -22,9 +22,8 @@ public class BankAccountApplicationBOImpl implements BankAccountApplicationBO {
 	}
 
 	@Override
-	public BankAccount denyBankAccount(int applicationId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean denyBankAccount(int applicationId) throws BusinessException {
+		return new BankAccountApplicationDAOImpl().denyBankAccount(applicationId);
 	}
 
 	@Override

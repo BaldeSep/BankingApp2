@@ -73,9 +73,20 @@ public class BankAccountApplicationDAOImpl implements BankAccountApplicationDAO 
 	}
 
 	@Override
-	public BankAccount denyBankAccount(int applicationId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean denyBankAccount(int applicationId) throws BusinessException {
+		boolean accountProcessed = false;
+		try(Connection conn = OracleDBConnection.getConnection()){
+			String sql = "{ call REJECTAPPLICATION(?) }";
+			CallableStatement statement = conn.prepareCall(sql);
+			statement.setInt(1, applicationId);
+			int updateCount = statement.executeUpdate();
+			if(updateCount == 1) {
+				accountProcessed = true;
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			throw new BusinessException("There Was An Internal Error");
+		}
+		return accountProcessed;
 	}
 
 	@Override

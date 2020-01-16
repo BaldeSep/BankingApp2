@@ -10,7 +10,7 @@ import com.bank.to.User;
 public interface BankAccountApplicationDAO {
 	boolean applyForBankAccount(User user, double initialBalance) throws BusinessException;
 	BankAccount approveBankAccount(int applicationId) throws BusinessException;
-	BankAccount denyBankAccount(int applicationId) throws BusinessException;
+	boolean denyBankAccount(int applicationId) throws BusinessException;
 	List<Application> viewApplications(User user) throws BusinessException;
 	List<Application> viewApplications() throws BusinessException;
 	Application viewApplication(int applicationId) throws BusinessException;
