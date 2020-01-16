@@ -76,23 +76,27 @@ function loadAccounts(){
     fetch("http://localhost:5050/MaximusBank/bankaccounts")
         .then( res => res.json() )
         .then( accounts => {
-            accounts.forEach( account => {
-                let tableOutput = ``;
-                let selectOutput = `<option selected>Source Account Number</option>`;
-                accounts.forEach( account => {
-                    tableOutput += `
-                        <tr id=${account.accountNumber}>
-                            <td>${account.accountNumber}</td>
-                            <td>$${account.balance}</td>
-                        </tr>
-                    `;
-                    selectOutput += `
-                        <option value="${account.accountNumber}">${account.accountNumber}</option>
-                    `;
-                });
-                accountsTableBody.innerHTML = tableOutput;
-                modalSelectSourceAccount.innerHTML = selectOutput;
-            }  )
+        	if(accounts){
+        		accounts.forEach( account => {
+        			let tableOutput = ``;
+        			let selectOutput = `<option selected>Source Account Number</option>`;
+        			accounts.forEach( account => {
+        				tableOutput += `
+        					<tr id=${account.accountNumber}>
+        					<td>${account.accountNumber}</td>
+        					<td>$${account.balance}</td>
+        					</tr>
+        					`;
+        				selectOutput += `
+        					<option value="${account.accountNumber}">${account.accountNumber}</option>
+        					`;
+        			});
+        			accountsTableBody.innerHTML = tableOutput;
+        			modalSelectSourceAccount.innerHTML = selectOutput;
+        		})        		
+        	}else{
+        		alert("No Accounts Found");
+        	}
         } )
 }
 

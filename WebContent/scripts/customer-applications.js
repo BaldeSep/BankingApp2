@@ -48,20 +48,42 @@ let btnProcessApplications = document.getElementById("process-applications");
 btnProcessApplications.addEventListener("click", e => {
     tableApplicationBody.querySelectorAll(".accepted").forEach( entry => {
         // Process Application Here Sending To The backend
-        console.log("Processing Application #" + entry.id.split("-")[2]);
+        processApplication(entry.id.split("-")[2], 2);
     } );
     tableApplicationBody.querySelectorAll(".rejected").forEach(entry => {
         // Process Application Here Sending To The backend
-        console.log("Processing Application #" + entry.id.split("-")[2]);
+        processApplication(entry.id.split("-")[2], 0);
     });
+    
 });
+
+function processApplication(applicationId, status){
+	console.log(applicationId + " " + status);
+	fetch(`http://localhost:5050/MaximusBank/apply?applicationId=${applicationId}&status=${status}`, {
+		method: "PUT",
+		header: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		}
+	}).then( res => res.json() )
+		.then( data => {
+			if(data.hasOwnProperty("message")){
+				alert(data.message);
+			}else{
+				alert(`Account Number: ${data.accountNumber} Initial Balance: ${data.balance}`);
+			}
+		});
+	loadApplications();
+}
 
 // Add Event Listener For table body for accept and reject radio buttons
 tableApplicationBody.addEventListener('click', e => {
     if(e.target.classList.contains("accept")){
         e.target.parentNode.parentNode.classList = "accepted";
     } else if(e.target.classList.contains("reject")){
-        e.target.parentNode.parentNode.classList = "rejected";
+    	e.target.parentNode.parentNode.classList = "rejected";
+    } else if(e.target.classList.contains("undecided")){
+    	e.target.parentNode.parentNode.classList = "undecided";
     }
 });
 
@@ -79,13 +101,15 @@ function loadApplications(){
 				let output = ``;
 				data.forEach( app => {
 					output += `
-						 <tr class="rejected" id="application-id-${app.applicationId}">
+						 <tr class=${ app.status != "Pending" ? "processed" : "undecided" } id="application-id-${app.applicationId}">
 			                <td>${app.applicationId}</td>
 			                <td>${app.applicant}</td>
 			                <td>$${app.initialBalance}</td>
 			                <td>${app.dateApplied.date.year}-${app.dateApplied.date.month}-${app.dateApplied.date.day}</td>
-			                <td> <input type="radio" class="accept" name="accept-reject=${app.applicationId}"></td>
-			                <td> <input type="radio" class="reject" name="accept-reject=${app.applicationId}" checked></td>
+			                <td>${app.status}</td>
+			                <td> <input type="radio" class=${ app.status == "Pending" ? "accept" : "processed" } name="accept-reject=${app.applicationId}" ${app.status == "Pending" ? "" : "disabled" }></td>
+			                <td> <input type="radio" class=${ app.status == "Pending" ? "reject" : "processed" } name="accept-reject=${app.applicationId}" ${app.status == "Pending" ? "" : "disabled" }></td>
+							<td> <input type="radio" class=${ app.status == "Pending" ? "undecided" : "processed" } name="accept-reject=${app.applicationId}" ${app.status == "Pending" ? "" : "disabled" } checked></td>
 						</tr>
 					`
 				});
