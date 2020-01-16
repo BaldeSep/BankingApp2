@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.bank.to.User;
+import com.bank.to.types.UserType;
+
 /**
  * Servlet implementation class EmployeeDashboardController
  */
@@ -30,8 +33,17 @@ public class EmployeeDashboardController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
-		PrintWriter out = response.getWriter();
-		out.print(session.getAttribute("user"));
+		if(session != null) {
+			User user = (User) session.getAttribute("user");
+			if(user.getUserType() == UserType.Employee) {
+				response.sendRedirect(request.getContextPath() + "/employee-dashboard.html");
+			}else {
+				session.invalidate();
+				response.sendRedirect(request.getContextPath() + "/");
+			}
+		}else {
+			response.sendRedirect(request.getContextPath() + "/");
+		}
 	}
 
 	/**
