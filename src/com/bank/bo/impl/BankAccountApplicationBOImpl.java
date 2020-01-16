@@ -18,8 +18,7 @@ public class BankAccountApplicationBOImpl implements BankAccountApplicationBO {
 
 	@Override
 	public BankAccount approveBankAccount(int applicationId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return new BankAccountApplicationDAOImpl().approveBankAccount(applicationId);
 	}
 
 	@Override

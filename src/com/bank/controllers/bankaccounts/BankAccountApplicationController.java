@@ -93,5 +93,10 @@ public class BankAccountApplicationController extends HttpServlet {
 			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}
+	
+	// For Accepting and Rejecting Accounts
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+	}
 
 }

@@ -43,8 +43,33 @@ public class BankAccountApplicationDAOImpl implements BankAccountApplicationDAO 
 
 	@Override
 	public BankAccount approveBankAccount(int applicationId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		BankAccount account = null;
+		try(Connection conn = OracleDBConnection.getConnection()){
+			String sql = "{ call APPROVEAPPLICATION(?,?,?,?,?) }";
+			CallableStatement statement = conn.prepareCall(sql);
+			statement.setInt(1, applicationId);
+			statement.registerOutParameter(2, java.sql.Types.VARCHAR);
+			statement.registerOutParameter(3, java.sql.Types.DOUBLE);
+			statement.registerOutParameter(4, java.sql.Types.INTEGER);
+			statement.registerOutParameter(5, java.sql.Types.DATE);
+			String holder;
+			double balance;
+			int accountNumber;
+			Date dateCreated;
+			int updateCount = statement.executeUpdate();
+			if(updateCount > 0) {
+				holder = statement.getString(2);
+				balance = statement.getDouble(3);
+				accountNumber = statement.getInt(4);
+				dateCreated = statement.getDate(5);
+				account = new BankAccount(accountNumber, holder, balance, dateCreated);
+			}else {
+				throw new BusinessException("Could Not Find Application");
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			throw new BusinessException("Internal Error");
+		}
+		return account;
 	}
 
 	@Override
