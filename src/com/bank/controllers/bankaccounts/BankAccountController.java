@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.BankAccountViewBO;
 import com.bank.bo.impl.BankAccountViewBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -23,6 +25,7 @@ import com.google.gson.Gson;
 @WebServlet("/bankaccount")
 public class BankAccountController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(BankAccountController.class);
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -48,6 +51,7 @@ public class BankAccountController extends HttpServlet {
 				if(queriedAccount != null) {
 					String jsonAccount = gson.toJson(queriedAccount);
 					response.setStatus(200);
+					log.info("Sending Account: " + queriedAccount);
 					response.getWriter().print(jsonAccount);
 				}else {
 					throw new BusinessException("Sorry The Account Could not Be Found");
@@ -58,6 +62,7 @@ public class BankAccountController extends HttpServlet {
 				response.getWriter().print(message);
 			}
 		}else {
+			log.info("Invalid Session Redirecting To Login Page");
 			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}
@@ -66,7 +71,6 @@ public class BankAccountController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

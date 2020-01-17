@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.BankAccountApplicationBO;
 import com.bank.bo.BankAccountViewBO;
 import com.bank.bo.impl.BankAccountApplicationBOImpl;
@@ -31,6 +33,7 @@ import com.google.gson.Gson;
 @WebServlet("/apply")
 public class BankAccountApplicationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(BankAccountApplicationController.class);
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -55,17 +58,23 @@ public class BankAccountApplicationController extends HttpServlet {
 			try {
 				boolean success = applicationBO.applyForBankAccount(user, initialBalance);
 				if(success) {
+					log.info("Applcation For User Sent");
 					response.setStatus(200);
 					out.print(new Gson().toJson(new MessageResponse("Application Sent")));
 				}else {
+					log.info("There Was An Internal Error");
 					response.setStatus(500);
 					out.print(new Gson().toJson(new MessageResponse("There Was An Internal Error")));
 				}
 				
 			} catch (BusinessException e) {
+				log.error(e);
 				response.setStatus(500);
 				out.print(new Gson().toJson(new MessageResponse(e.getMessage())));
 			}
+		}else {
+			log.info("Session Invalid Redirecting To Login Page");
+			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}
 	
@@ -81,17 +90,20 @@ public class BankAccountApplicationController extends HttpServlet {
 				appliations = accountBO.viewApplications();
 				if(appliations != null) {
 					String jsonApplications = gson.toJson(appliations);
+					log.info("Sending Applications: " + jsonApplications);
 					response.setStatus(200);
 					response.getWriter().print(jsonApplications);
 				}else {
 					throw new BusinessException("No Valid Applications Found");
 				}
 			} catch (BusinessException e) {
+				log.error(e);
 				response.setStatus(500);
 				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.getWriter().print(message);
 			}
 		}else {
+			log.info("Invalis Session Redirecting To Login Page");
 			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}
@@ -103,7 +115,6 @@ public class BankAccountApplicationController extends HttpServlet {
 			User user = (User) session.getAttribute("user");
 			if(user != null && user.getUserType() == UserType.Employee) {
 				Gson gson = new Gson();
-				response.setContentType("application/json");
 				response.setContentType("application/json");
 				Map<String, String[]> req = request.getParameterMap();
 				int applicationId = Integer.parseInt(req.get("applicationId")[0]);
@@ -121,15 +132,17 @@ public class BankAccountApplicationController extends HttpServlet {
 						if(approvedAccount != null) {
 							String jsonAccount = gson.toJson(approvedAccount);
 							response.setStatus(200);
+							log.info("Sending Accepted Account: "+ jsonAccount);
 							response.getWriter().print(jsonAccount);
 						}else {
 							throw new BusinessException("Application Could Not Be Found");
 						}
 						break;
 					case Denied:
-						accountRejected  = applicationBO.denyBankAccount(applicationId);
+						accountRejected = applicationBO.denyBankAccount(applicationId);
 						if(accountRejected) {
 							String message = gson.toJson(new MessageResponse("Account Successfully Rejected"));
+							log.info("Account" + applicationId + " Was Rejected");
 							response.setStatus(200);
 							response.getWriter().print(message);
 						}else {
@@ -141,15 +154,18 @@ public class BankAccountApplicationController extends HttpServlet {
 					}
 					
 				}catch(BusinessException e) {
+					log.error(e);
 					response.setStatus(500);
 					String message = gson.toJson(new MessageResponse(e.getMessage()));
 					response.getWriter().print(message);
 				}
 			}else {
+				log.info("Invalid Session Redirecting To Login Page");
 				session.invalidate();
 				response.sendRedirect(request.getContextPath() + "/");
 			}
 		}else {
+			log.info("Invalid Session Redirecting To Login Page");
 			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}

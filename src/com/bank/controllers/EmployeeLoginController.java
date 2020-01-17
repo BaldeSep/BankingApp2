@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -24,6 +26,7 @@ import com.google.gson.Gson;
  */
 @WebServlet("/emp")
 public class EmployeeLoginController extends HttpServlet {
+	private static final Logger log = Logger.getLogger(EmployeeLoginController.class);
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -38,6 +41,7 @@ public class EmployeeLoginController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		log.info("Redirecting Employee To Login");
 		response.sendRedirect( request.getContextPath() + "/employee-login.html");
 	}
 
@@ -56,19 +60,23 @@ public class EmployeeLoginController extends HttpServlet {
 			if(validatedUser != null && validatedUser.getUserType() == UserType.Employee) {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", validatedUser);
+				log.info("Validated " + validatedUser + " Redirecting To Dashboard");
 				response.sendRedirect(request.getContextPath() + "/empdash");
 			}else if( validatedUser != null && validatedUser.getUserType() != UserType.Employee ) {
 				response.setStatus(401);
 				String message = gson.toJson(new MessageResponse("Only Employees Can Login Here..."));
+				log.error("Invalid User Tried To Login");
 				out.print(message);
 			}
 			else {
 				response.setStatus(401);
+				log.error("Employee Crednetials Not Found");
 				String message = gson.toJson(new MessageResponse("Employee Could Not Be Found"));
 				out.print(message);
 			}
 		}catch(BusinessException e) {
 			response.setStatus(401);
+			log.error(e);
 			String message = gson.toJson(new MessageResponse(e.getMessage()));
 			out.print(message);
 		}

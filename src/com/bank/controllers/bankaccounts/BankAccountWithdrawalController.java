@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.BankAccountTransactionBO;
 import com.bank.bo.impl.BankAccountTransactionBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -22,6 +24,7 @@ import com.google.gson.Gson;
 @WebServlet("/withdrawal")
 public class BankAccountWithdrawalController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(BankAccountWithdrawalController.class); 
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -43,6 +46,7 @@ public class BankAccountWithdrawalController extends HttpServlet {
 			try {
 				BankAccount updatedAccount = bankBO.makeWithdrawal(account, amount);
 				if(updatedAccount != null) {
+					log.info("Account: " + account + " Updated By: " + amount);
 					String message = gson.toJson(new MessageResponse(String.valueOf(amount)));
 					response.setStatus(200);
 					response.getWriter().print(message);
@@ -50,11 +54,13 @@ public class BankAccountWithdrawalController extends HttpServlet {
 					throw new BusinessException("Sorry The Deposit Could Not Be Completed");
 				}
 			} catch (BusinessException e) {
+				log.error(e);
 				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
 				response.getWriter().print(message);
 			}
 		}else {
+			log.error("Invalid Session Redirecting To The Login Page");
 			response.sendRedirect( request.getContextPath() +  "/");
 		}
 	}

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.BankAccountViewBO;
 import com.bank.bo.impl.BankAccountViewBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -25,6 +27,7 @@ import com.google.gson.Gson;
 @WebServlet("/bankaccounts")
 public class BankAccountsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(BankAccountsController.class); 
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -49,6 +52,7 @@ public class BankAccountsController extends HttpServlet {
 					customer = user;
 				}
 				if(customer == null) {
+					log.error("No Valid Customer For Querying Accounts");
 					session.invalidate();
 					response.sendRedirect(request.getContextPath() + "/");
 				}
@@ -59,20 +63,24 @@ public class BankAccountsController extends HttpServlet {
 					if(accounts != null && !accounts.isEmpty()) {
 						String jsonAccounts = gson.toJson(accounts);
 						response.setStatus(200);
+						log.info("Sending Queried Accounts For User: " + jsonAccounts);
 						response.getWriter().print(jsonAccounts);
 					}else {
 						throw new BusinessException("No Valid Accounts Could Be Found");
 					}
 				} catch (BusinessException e) {
+					log.info(e);
 					String message = gson.toJson(new MessageResponse(e.getMessage()));
 					response.setStatus(500);
 					response.getWriter().print(message);
 				}
 			}else {
+				log.error("Invalid User Session Redirecting To Login Page");
 				session.invalidate();
 				response.sendRedirect(request.getContextPath() + "/");
 			}
 		}else {
+			log.info("Invalid Session Redirecting User To Login Page");
 			response.sendRedirect(request.getContextPath() + "/");
 		}
 	}

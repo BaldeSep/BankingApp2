@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -24,6 +26,7 @@ import com.google.gson.Gson;
 @WebServlet("/register")
 public class UserRegistrationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(UserRegistrationController.class);
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -50,12 +53,15 @@ public class UserRegistrationController extends HttpServlet {
 			User registeredUser = userBO.registerUser(user, passwordOne, passwordTwo);
 			if(registeredUser != null) {
 				response.setStatus(200);
+				log.info("Successful Regsitration For: " + user);
 				out.print(gson.toJson(new MessageResponse("Registration Successful!!!")));
 			}else {
 				response.setStatus(401);
+				log.info("User " + user + " could be registered");
 				out.print(gson.toJson(new MessageResponse("There Was An Issue Registering Tat Account")));
 			}
 		} catch (BusinessException e) {
+			log.info(e);
 			response.setStatus(401);
 			out.print(gson.toJson(new MessageResponse(e.getMessage())));
 		}
@@ -63,6 +69,7 @@ public class UserRegistrationController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		log.info("Redirecting User To Registration Page");
 		resp.sendRedirect(req.getContextPath() + "/register-customer.html");
 	}
 	

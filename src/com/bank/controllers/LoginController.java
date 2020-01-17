@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
@@ -25,6 +27,7 @@ import com.google.gson.Gson;
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(LoginController.class);
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -48,10 +51,12 @@ public class LoginController extends HttpServlet {
 			if(validatedUser != null) {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", validatedUser);
+				log.info("User " + validatedUser + " logged in."  );
 				response.sendRedirect(request.getContextPath() + "/dashboard");
 			}
 		}catch(BusinessException e) {
 			response.setStatus(401);
+			log.error(e);
 			out.print(gson.toJson(new MessageResponse(e.getMessage())));
 		}
 
