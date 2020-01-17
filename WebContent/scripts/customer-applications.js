@@ -70,9 +70,9 @@ function processApplication(applicationId, status){
 				showMessage(data.message);
 			}else{
 				showMessage(`Account Number: ${data.accountNumber} Initial Balance: ${data.balance}`);
+				loadApplications();
 			}
 		});
-	loadApplications();
 }
 
 // Add Event Listener For table body for accept and reject radio buttons

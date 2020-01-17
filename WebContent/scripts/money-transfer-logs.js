@@ -58,10 +58,11 @@ function loadLogs(){
 		.then( res => res.json() )
 		.then( data => {
 			if(data.hasOwnProperty("message")){
-				alert(message);
+				console.log(data.message);
 			}else{
 				let output = ``;
 				data.forEach( log => {
+					console.log(log);
 					output += `
 						<tr>
 							<td>${log.transactionId}</td>
@@ -70,7 +71,7 @@ function loadLogs(){
 							<td>${log.destinationAccount}</td>
 							<td>${log.destinationHolder}</td>
 							<td>${log.amount}</td>
-							<td>${log.dateOfPost}</td>
+							<td>${log.dateOfPosting}</td>
 						</tr>
 					`;
 				});

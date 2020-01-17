@@ -87,7 +87,7 @@ public class MoneyTransferDAOImpl implements MoneyTransferDAO {
 			double amount;
 			
 			int updateCount = insertStatement.executeUpdate();
-			if(updateCount == 1) {
+			if(updateCount > 0) {
 				transferId = insertStatement.getInt(6);
 				sourceAccount = insertStatement.getInt(7);
 				sourceHolder = insertStatement.getString(8);
@@ -107,7 +107,7 @@ public class MoneyTransferDAOImpl implements MoneyTransferDAO {
 			}
 			
 		}catch( SQLException | ClassNotFoundException e) {
-			throw new BusinessException("Transfer Could Not Be Processed.");
+			throw new BusinessException("Internal Error Occured");
 		}
 		return addedTransfer;
 	}

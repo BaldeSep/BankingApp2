@@ -178,25 +178,22 @@ function makeWithdrawal(){
 
 // Post Money Transfer
 function postMoneyTransfer(){
-	let amount = inputAmountTrasnfer.value; 
-	let destinationAccount = inputDestinationAccount.value;
+	let amount = +inputAmountTrasnfer.value; 
+	let destinationAccount = +inputDestinationAccount.value;
 	let selectedSource = +selectSourceAccount.value;
 	if(isNaN(selectedSource)){
 		showMessageTransfer("Select a source account");
-	}else if(amount.trim() == ""){
-		showMessageTransfer("Enter something into account");
-	}else if(destinationAccount.trim() == ""){
-		showMessageTransfer("Enter something into destination");
 	}else if(amount < 0){
 		showMessageTransfer("Amount must be greater than 0");
 	}else if(destinationAccount < 0){
 		showMessageTransfer("Detination account number must be greater than 0");
 	}else{
 		let transfer = {
-				sourceAccount: selectSourceAccount.value,
+				sourceAccount: selectedSource,
 				destinationAccount,
 				amount
 		}
+		console.log(transfer);
 		fetch("http://localhost:5050/MaximusBank/transfers", {
 			method: "POST",
 			header: {
