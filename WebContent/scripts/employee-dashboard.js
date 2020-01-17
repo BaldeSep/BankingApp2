@@ -81,27 +81,31 @@ function handleGettingAccount(){
 
 function populateAccount(){
 	let accountNumber = inputGetAnAccount.value;
-	fetch(`http://localhost:5050/MaximusBank/bankaccount?accountNumber=${accountNumber}`)
+	if(accountNumber < 0){
+		showMessage("Account number must be a positive number");
+	}else{
+		fetch(`http://localhost:5050/MaximusBank/bankaccount?accountNumber=${accountNumber}`)
 		.then( res => res.json() )
 		.then( data => {
 			if(data.hasOwnProperty("message")){
-				alert(data.message);
+				showMessage(data.message);
 			}else{
 				let output = `
 					<tr>
-						<td>${data.accountNumber}</td>
-						<td>${data.holder}</td>
-						<td>${data.balance}</td>
+					<td>${data.accountNumber}</td>
+					<td>${data.holder}</td>
+					<td>${data.balance}</td>
 					</tr>
-				`;
+					`;
 				let userName = data.holder;
 				accountTableBody.innerHTML = output;
 				document.getElementById("display-user-name").innerText = userName;
 				if(accountTableWrapper.classList.contains("d-none")){
-			        accountTableWrapper.classList.remove("d-none");
-			    }
+					accountTableWrapper.classList.remove("d-none");
+				}
 			}
-		} );
+		} );		
+	}
 	return false;
 }
 
@@ -113,7 +117,7 @@ function populateAccountsTable(){
 		.then( res => res.json() )
 		.then( data => {
 			if(data.hasOwnProperty("message")){
-				alert(data.message);
+				showMessage(data.message);
 			}else{
 				let output = ``;
 				let userName = "";
@@ -133,6 +137,22 @@ function populateAccountsTable(){
 			        accountTableWrapper.classList.remove("d-none");
 			    }
 			}
-		}).catch( err => console.log(err) );
+		})
 	return false;
+}
+
+//Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
 }

@@ -58,7 +58,6 @@ btnProcessApplications.addEventListener("click", e => {
 });
 
 function processApplication(applicationId, status){
-	console.log(applicationId + " " + status);
 	fetch(`http://localhost:5050/MaximusBank/apply?applicationId=${applicationId}&status=${status}`, {
 		method: "PUT",
 		header: {
@@ -68,9 +67,9 @@ function processApplication(applicationId, status){
 	}).then( res => res.json() )
 		.then( data => {
 			if(data.hasOwnProperty("message")){
-				alert(data.message);
+				showMessage(data.message);
 			}else{
-				alert(`Account Number: ${data.accountNumber} Initial Balance: ${data.balance}`);
+				showMessage(`Account Number: ${data.accountNumber} Initial Balance: ${data.balance}`);
 			}
 		});
 	loadApplications();
@@ -96,7 +95,7 @@ function loadApplications(){
 		.then( res => res.json() )
 		.then( data => {
 			if(data.hasOwnProperty("message")){
-				alert(data.message);
+				showMessage(data.message);
 			}else{
 				let output = ``;
 				data.forEach( app => {
@@ -117,3 +116,19 @@ function loadApplications(){
 			}
 		});
 } 
+
+//Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
+}
