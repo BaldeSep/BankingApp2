@@ -33,8 +33,11 @@ public class UserRegistrationTesting {
 	@Test
 	public void testValidUserRegistration() {
 		User registeredUser = null;
+		String passwordOne,passwordTwo;
+		passwordOne = "abc";
+		passwordTwo = "abc";
 		try {
-			registeredUser = userBO.registerUser(validUser);
+			registeredUser = userBO.registerUser(validUser, passwordOne, passwordTwo);
 		} catch (BusinessException e) {
 			System.out.println(e.getMessage());
 		}
