@@ -23,11 +23,11 @@ function handleSubmit(){
     let validPassword = validateInput(passwordOne, 3);
 
     if(!validUserName){
-        showInvalidUserNameAlert();
+    	showMessage("User Name Is Invalid");
     }else if(!passwordsMatch){
-        showPasswordMismatch();
+        showMessage("Passwords Do Not Match");
     }else if(!validPassword){
-        showInvalidPasswordAlert();
+        showMessage("Password Is Invalid");
     }else{
         let formBody = {
             userName,
@@ -42,13 +42,13 @@ function handleSubmit(){
             },
             body: JSON.stringify(formBody),
         }).then( res => {
-            if(res.status === 401){
-                return res.text()
-            }else if(res.status === 200 && res.redirected){
+            if(res.status === 200 && res.redirected){
                 window.location.href = res.url;
+            }else{
+            	return res.json();
             }
-            return "Registration Successful Successful";
-        }).then( text => console.log(text) );
+
+        }).then( data => showMessage(data.message) );
     }
 
     return false;
@@ -64,32 +64,19 @@ function validateInput(input, minLength){
     return input.match(pattern);
 }
 
-// Show Alerts For Invalid user names
-function showInvalidUserNameAlert(){
-    if(alertInvalidUserName.classList.contains("d-none")){
-        alertInvalidUserName.classList.remove("d-none");
-        setTimeout( () => {
-            alertInvalidUserName.classList.add("d-none");
-        }, 7000 );
-    }
-}
 
-// Show Alerts For Invalid user names
-function showInvalidPasswordAlert(){
-    if(alertInvalidPassword.classList.contains("d-none")){
-        alertInvalidPassword.classList.remove("d-none");
-        setTimeout( () => {
-            alertInvalidPassword.classList.add("d-none");
-        }, 7000 );
-    }
-}
+//Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
 
-// Show Password Mismatch
-function showPasswordMismatch(){
-    if(alertPasswordMismatch.classList.contains("d-none")){
-        alertPasswordMismatch.classList.remove("d-none");
-        setTimeout( () => {
-            alertPasswordMismatch.classList.add("d-none");
-        }, 7000 );
-    }
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
 }

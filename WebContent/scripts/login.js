@@ -6,10 +6,6 @@ let inputUserName = document.getElementById("user-name");
 let inputPassword = document.getElementById("password");
 
 
-// Get Message span for alerts
-let alert = document.getElementById("alert");
-let messageSpan = document.getElementById("message");
-let closeAlertButton = document.getElementById("alert-close");
 
 function handleSubmit(){
 	let userName = inputUserName.value.trim();
@@ -44,9 +40,6 @@ function handleSubmit(){
     return false;
 }
 
-closeAlertButton.addEventListener( "click", e => {
-	alert.classList.remove("show");
-});
 
 
 // Verify User Name and Password
@@ -55,10 +48,20 @@ function verify(input, minLength){
     return input.match(pattern);
 }
 
+
+
+// Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
 function showMessage(message){
 	if(!alert.classList.contains("show")){
 		alert.classList.add("show");
 	}
 	messageSpan.innerText = message;
-	
 }

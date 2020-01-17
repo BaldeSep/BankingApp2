@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
+import com.bank.to.MessageResponse;
 import com.bank.to.User;
 import com.bank.to.UserRegistrationRequest;
 import com.bank.to.types.UserType;
@@ -38,7 +39,7 @@ public class UserRegistrationController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
  		PrintWriter out = response.getWriter();
-		response.setContentType("text/plain");
+		response.setContentType("application/json");
 		UserRegistrationRequest userReg = gson.fromJson(request.getReader(), UserRegistrationRequest.class);
 		String userName = userReg.getUserName();
 		String passwordOne = userReg.getPasswordOne();
@@ -49,20 +50,19 @@ public class UserRegistrationController extends HttpServlet {
 			User registeredUser = userBO.registerUser(user, passwordOne, passwordTwo);
 			if(registeredUser != null) {
 				response.setStatus(200);
-				response.sendRedirect( request.getContextPath() + "/");
+				out.print(gson.toJson(new MessageResponse("Registration Successful!!!")));
 			}else {
 				response.setStatus(401);
-				out.print("There Was Issue Registering With That User Name And Password");
+				out.print(gson.toJson(new MessageResponse("There Was An Issue Registering Tat Account")));
 			}
 		} catch (BusinessException e) {
 			response.setStatus(401);
-			out.print(e.getMessage());
+			out.print(gson.toJson(new MessageResponse(e.getMessage())));
 		}
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("text/html");
 		resp.sendRedirect(req.getContextPath() + "/register-customer.html");
 	}
 	
