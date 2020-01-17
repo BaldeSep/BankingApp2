@@ -44,6 +44,13 @@
             </div>
           </div>
         </div>
+        
+         <div id="alert-transactions" class="row justify-content-center mt-3 alert alert-warning alert-dismissible fade" role="alert">
+		  <span id="message-transactions" >Enter Message Here</span>
+		  	<button id="alert-close-transactions" type="button" class="close" aria-label="Close">
+		  		<span aria-hidden="true">&times;</span>
+	  		</button>
+		</div>
     </div>
 
     <!-- Modal For Money Transfers -->
@@ -74,7 +81,7 @@
               </form>
             </div>
           </div>
-        </div>
+        </div> 
     </div>
 
     <!-- Modal For  Applying For A Bank Account -->
@@ -99,6 +106,13 @@
             </div>
             </div>
         </div>
+        
+        <div id="alert-apply" class="row justify-content-center mt-3 alert alert-warning alert-dismissible fade" role="alert">
+		  <span id="message-apply" >Enter Message Here</span>
+		  <button id="alert-close-apply" type="button" class="close" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
     </div>
     
     <!-- Navbar -->
@@ -126,13 +140,20 @@
         </div>        
     </nav>
     
+    <div id="alert" class="row justify-content-center mt-3 alert alert-warning alert-dismissible fade" role="alert">
+	  <span id="message" >Enter Message Here</span>
+	  <button id="alert-close" type="button" class="close" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+    
     <div class="container-md">
         <div class="jumbotron text-center">
             <h1 class="display-4">Welcome To Maximus Bank</h1>
             <p class="lead">How Can We Assist You Today?</p>
             <form  onSubmit="return getAccounts();" id="search-accounts-form">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="account" id="search-accounts" placeholder="Enter Bank Account Number Here...">
+                    <input type="number" step=1 class="form-control" name="account" id="search-accounts" placeholder="Enter Bank Account Number Here...">
                 </div>
                 <div class="form-group">
                     <input type="submit" class="form-control" id="submit-account-search" value="Search For Specific Account">

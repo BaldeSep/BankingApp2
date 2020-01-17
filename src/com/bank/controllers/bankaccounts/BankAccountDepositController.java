@@ -38,6 +38,7 @@ public class BankAccountDepositController extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		if(session != null) {
 			Gson gson = new Gson();
+			response.setContentType("application/json");
 			Transaction transaction = gson.fromJson(request.getReader(), Transaction.class);
 			BankAccount account = new BankAccount();
 			account.setAccountNumber(transaction.getAccountNumber());
@@ -47,14 +48,12 @@ public class BankAccountDepositController extends HttpServlet {
 				BankAccount updatedAccount = bankBO.makeDeposit(account, amount);
 				if(updatedAccount != null) {
 					String message = gson.toJson(new MessageResponse(String.valueOf(updatedAccount.getBalance())));
-					response.setContentType("application/json");
 					response.setStatus(200);
 					response.getWriter().print(message);
 				}else {
 					throw new BusinessException("Sorry The Deposit Could Not Be Completed");
 				}
 			} catch (BusinessException e) {
-				response.setContentType("application/json");;
 				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
 				response.getWriter().print(message);

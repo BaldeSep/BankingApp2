@@ -47,7 +47,7 @@ public class BankAccountApplicationController extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		if(session != null) {
 			PrintWriter out = response.getWriter();
-			response.setContentType("text/plain");
+			response.setContentType("applcation/json");
 			User user = (User) session.getAttribute("user");
 			Application application = new Gson().fromJson(request.getReader(), Application.class);
 			double initialBalance = application.getInitialBalance();
@@ -56,15 +56,15 @@ public class BankAccountApplicationController extends HttpServlet {
 				boolean success = applicationBO.applyForBankAccount(user, initialBalance);
 				if(success) {
 					response.setStatus(200);
-					out.print("Application Sent");
+					out.print(new Gson().toJson(new MessageResponse("Application Sent")));
 				}else {
 					response.setStatus(500);
-					out.print("There Was An Error Processing Your Application");
+					out.print(new Gson().toJson(new MessageResponse("There Was An Internal Error")));
 				}
 				
 			} catch (BusinessException e) {
 				response.setStatus(500);
-				out.print(e.getMessage());
+				out.print(new Gson().toJson(new MessageResponse(e.getMessage())));
 			}
 		}
 	}

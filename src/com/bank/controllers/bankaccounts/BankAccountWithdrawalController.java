@@ -33,6 +33,7 @@ public class BankAccountWithdrawalController extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if(session != null) {
+			response.setContentType("application/json");
 			Gson gson = new Gson();
 			Transaction transaction = gson.fromJson(request.getReader(), Transaction.class);
 			BankAccount account = new BankAccount();
@@ -43,15 +44,13 @@ public class BankAccountWithdrawalController extends HttpServlet {
 				BankAccount updatedAccount = bankBO.makeWithdrawal(account, amount);
 				if(updatedAccount != null) {
 					String message = gson.toJson(new MessageResponse(String.valueOf(amount)));
-					response.setContentType("application/json");
 					response.setStatus(200);
 					response.getWriter().print(message);
 				}else {
 					throw new BusinessException("Sorry The Deposit Could Not Be Completed");
 				}
 			} catch (BusinessException e) {
-				response.setContentType("application/json");
-				String message = gson.toJson(String.valueOf(new MessageResponse(e.getMessage())));
+				String message = gson.toJson(new MessageResponse(e.getMessage()));
 				response.setStatus(500);
 				response.getWriter().print(message);
 			}

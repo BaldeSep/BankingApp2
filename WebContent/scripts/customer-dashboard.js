@@ -49,22 +49,28 @@ accountsTableBody.addEventListener("click", e => {
 
 // Function For Getting Specific Account From Server
 function getAccounts(){
-    fetch("http://localhost:5050/MaximusBank/bankaccounts")
-    .then( res => res.json() )
-    .then( accounts => {
-            let accountNumber = inputAccountNumber.value;
-            let account = accounts.find( a => a.accountNumber == accountNumber );
-            if(account){
-                accountsTableBody.innerHTML = `
-                    <tr id=${account.accountNumber}>
-                        <td>${account.accountNumber}</td>
-                        <td>${account.balance}</td>
-                    </tr>
-                `
-            }else{
-                alert("Could Not Find Account");
-            }        
-    });
+	let accountNumber = inputAccountNumber.value;
+	if(accountNumber < 0){
+		showMessage("Account Number Must Be A Positive Number");
+	}else{
+		fetch("http://localhost:5050/MaximusBank/bankaccounts")
+		.then( res => res.json() )
+		.then( accounts => {
+			if(accounts.hasOwnProperty("message")){
+				showMessage(accounts.message);
+			}else{
+				let account = accounts.find( a => a.accountNumber == accountNumber );
+				if(account){
+					accountsTableBody.innerHTML = `
+						<tr id=${account.accountNumber}>
+						<td>${account.accountNumber}</td>
+						<td>${account.balance}</td>
+						</tr>
+						`
+				}   				
+			}
+		});		
+	}
     return false;
 }
 
@@ -76,7 +82,9 @@ function loadAccounts(){
     fetch("http://localhost:5050/MaximusBank/bankaccounts")
         .then( res => res.json() )
         .then( accounts => {
-        	if(accounts){
+        	if(accounts.hasOwnProperty("message")){
+        		showMessage(accounts.message);
+        	}else{
         		accounts.forEach( account => {
         			let tableOutput = ``;
         			let selectOutput = `<option selected>Source Account Number</option>`;
@@ -94,66 +102,77 @@ function loadAccounts(){
         			accountsTableBody.innerHTML = tableOutput;
         			modalSelectSourceAccount.innerHTML = selectOutput;
         		})        		
-        	}else{
-        		alert("No Accounts Found");
         	}
-        } )
+        })
 }
 
 // Apply For Bank Account
 function applyForAccount(){
-    let application = {
-        initialBalance: document.getElementById("initial-balance").value,
-    }
-    fetch("http://localhost:5050/MaximusBank/apply", {
-        method: "POST",
-        header: {
-            'Content-Type': 'application/json',
-            'Accept': 'text/plain'
-        },
-        body: JSON.stringify(application)
-    })
-        .then( res => res.text() )
-        .then( text => alert(text) );
+	let initialBalance = document.getElementById("initial-balance").value;
+	if(initialBalance < 0){
+		showMessageApply("Invalid Initial Balance Must Be Greater Than 0");
+	}else{
+		let application = {
+				initialBalance
+		}
+		fetch("http://localhost:5050/MaximusBank/apply", {
+			method: "POST",
+			header: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			body: JSON.stringify(application)
+		})
+		.then( res => res.json() )
+		.then( text => showMessageApply(text.message) );		
+	}
     return false;
 }
 
 // Make A Deposit
 function makeDeposit(){
 	let amount = inputMakeDeposit.value;
-	inputMakeDeposit.value = "";
-	fetch("http://localhost:5050/MaximusBank/deposit", {
-		method: "PUT",
-		header: {
-			'Content-Type': "application/json",
-			'Accept': ['text/plain', 'application.json']
-		},
-		body: JSON.stringify({ amount, accountNumber: selectedAccountNumber })
-	}).then( res => res.json() )
+	if(amount < 0){
+		showMessageTransaction("Deposit Amount Must Be Greater Than 0");
+	}else{
+		inputMakeDeposit.value = "";
+		fetch("http://localhost:5050/MaximusBank/deposit", {
+			method: "PUT",
+			header: {
+				'Content-Type': "application/json",
+				'Accept': 'application.json'
+			},
+			body: JSON.stringify({ amount, accountNumber: selectedAccountNumber })
+		}).then( res => res.json() )
 		.then( data => {
-			alert(data.message);
+			showMessageTransaction(data.message);
 			loadAccounts();
-	} );
+		} );		
+	}
 	return false;
 }
 
 //Make A Withdrawal
 function makeWithdrawal(){
 	let amount = inputMakeWithdrawal.value;
-	inputMakeWithdrawal.value = "";
-	let withdrawal = { amount, accountNumber: selectedAccountNumber };
-	fetch("http://localhost:5050/MaximusBank/withdrawal", {
-		method: "PUT",
-		header: {
-			'Content-Type': "application/json",
-			'Accept': ['text/plain', 'application.json']
-		},
-		body: JSON.stringify(withdrawal)
-	}).then( res => res.json())
+	if(amount < 0){
+		showMessageTransaction("Withdrawals Amount Must Be Greater Than 0");
+	}else{
+		inputMakeWithdrawal.value = "";
+		let withdrawal = { amount, accountNumber: selectedAccountNumber };
+		fetch("http://localhost:5050/MaximusBank/withdrawal", {
+			method: "PUT",
+			header: {
+				'Content-Type': "application/json",
+				'Accept': 'application.json'
+			},
+			body: JSON.stringify(withdrawal)
+		}).then( res => res.json())
 		.then( data => {
-			alert(data.message);
+			showMessageTransaction(data.message);
 			loadAccounts();
-		})
+		})		
+	}
 	return false;
 }
 
@@ -176,17 +195,66 @@ function postMoneyTransfer(){
 			body: JSON.stringify(transfer)
 		}).then( res => res.json() )
 			.then( data => {
-				alert(data.message)
+				showMessage(data.message);
 			} )
 		
 		
 	}else if(amount == 0){
-		alert("Amount Must Be Greater Than 0");
+		showMessage("Amount Must Be Greater Than 0");
 	}else if(destinationAccount == 0){
-		alert("Destination Account Number Must Be A Positive Number");
+		showMessage("Destination Account Number Must Be A Positive Number");
 	}
 	
 	return false;
+}
+
+
+//Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
+}
+
+//Get Message span for apply alerts
+let alertApply = document.getElementById("alert-apply");
+let messageSpanApply = document.getElementById("message-apply");
+let closeAlertButtonApply = document.getElementById("alert-close-apply");
+
+closeAlertButtonApply.addEventListener( "click", e => {
+	alertApply.classList.remove("show");
+});
+
+function showMessageApply(message){
+	if(!alertApply.classList.contains("show")){
+		alertApply.classList.add("show");
+	}
+	messageSpanApply.innerText = message;
+}
+
+//Get Message span for transactions alerts
+let alertTransaction = document.getElementById("alert-transactions");
+let messageSpanTransaction= document.getElementById("message-transactions");
+let closeAlertButtonTransaction= document.getElementById("alert-close-transactions");
+
+closeAlertButtonTransaction.addEventListener( "click", e => {
+	alertTransaction.classList.remove("show");
+});
+
+function showMessageTransaction(message){
+	if(!alertTransaction.classList.contains("show")){
+		alertTransaction.classList.add("show");
+	}
+	messageSpanTransaction.innerText = message;
 }
 
 
