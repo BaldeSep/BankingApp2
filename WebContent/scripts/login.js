@@ -5,11 +5,11 @@ let formLogin = document.getElementById("login-form");
 let inputUserName = document.getElementById("user-name");
 let inputPassword = document.getElementById("password");
 
-// Get Alerts For Invalid User Credentials
-let alertUserName = document.getElementById("alert-invalid-username");
-let alertPassword = document.getElementById("alert-invalid-password");
 
-
+// Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
 
 function handleSubmit(){
 	let userName = inputUserName.value.trim();
@@ -18,31 +18,35 @@ function handleSubmit(){
     let validUserName = verify(userName, 5);
     let validPassword =  verify(password, 3);
     if(!validUserName){
-        showInvalidUserName();
+        showMessage("Invalid User Name");
     }else if(!validPassword){
-        showInvalidPassword();
+    	showMessage("Invalid Password");
     }else{
         let endPoint = formLogin.dataset.end;
 	    fetch(`http://localhost:5050/MaximusBank/${endPoint}`, {
 	    	method: "POST",
             redirect: 'follow',
 	    	headers: {
-	    		'Accept': ['text/plain', 'text/html'],
+	    		'Accept': 'application/json',
 	    		'Content-Type': 'application/json'
             },
 	    	body: JSON.stringify({ user_name: userName, password:password })
         }).then( res => {
             if(res.status == 401){
-                return res.text();
+                return res.json();
             }else if(res.redirected){
                 window.location.href = res.url;
             }
-        }).then( text => {
-            console.log(text);
+        }).then( message => {
+            showMessage(message.message);
         } )
     }
     return false;
 }
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
 
 
 // Verify User Name and Password
@@ -51,22 +55,10 @@ function verify(input, minLength){
     return input.match(pattern);
 }
 
-
-// Show Invalid User Name Alert
-function showInvalidUserName(){
-    if(alertUserName.classList.contains("d-none")){
-        alertUserName.classList.remove("d-none");
-        setTimeout( () => {
-            alertUserName.classList.add("d-none");
-        },3000 );
-    }
-}
-// Show Invalid Password Alert
-function showInvalidPassword(){
-    if(alertPassword.classList.contains("d-none")){
-        alertPassword.classList.remove("d-none");
-        setTimeout( () => {
-            alertPassword.classList.add("d-none");
-        },3000 );
-    }
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
+	
 }

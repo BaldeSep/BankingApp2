@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import com.bank.bo.UserBO;
 import com.bank.bo.impl.UserBOImpl;
 import com.bank.exceptions.BusinessException;
+import com.bank.to.MessageResponse;
 import com.bank.to.User;
 import com.bank.to.types.UserType;
 import com.google.gson.Gson;
@@ -36,7 +37,7 @@ public class LoginController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/plain");
+		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 		PrintWriter out = response.getWriter();
 		Gson gson = new Gson();
@@ -51,7 +52,7 @@ public class LoginController extends HttpServlet {
 			}
 		}catch(BusinessException e) {
 			response.setStatus(401);
-			out.print(e.getMessage());
+			out.print(gson.toJson(new MessageResponse(e.getMessage())));
 		}
 
 	}
