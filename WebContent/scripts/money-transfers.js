@@ -83,12 +83,12 @@ btnProcessTransfers.addEventListener("click", e => {
     			body: JSON.stringify(transfer)
     		}).then( res => res.json() )
     			.then( data => {
-    				alert(data.message)
+    				showMessage(data.message)
     			});    		
     	});
     	loadTransfers();
     }else{
-    	alert("Please Make A Selection!!!");
+    	showMessage("Please Make A Selection!!!");
     }
 });
 
@@ -101,7 +101,7 @@ function loadTransfers(){
     	.then( res => res.json() )
     	.then( data => {
     		if(data.hasOwnProperty("message")){
-    			alert(data.message);
+    			showMessage(data.message);
     		}else{
     			data.forEach( transfer => {
     				let status;
@@ -129,3 +129,20 @@ function loadTransfers(){
 }
 
 const Status = Object.freeze({"Pending": 1, "Accepted": 2, "Rejected": 0});
+
+
+//Get Message span for alerts
+let alert = document.getElementById("alert");
+let messageSpan = document.getElementById("message");
+let closeAlertButton = document.getElementById("alert-close");
+
+closeAlertButton.addEventListener( "click", e => {
+	alert.classList.remove("show");
+});
+
+function showMessage(message){
+	if(!alert.classList.contains("show")){
+		alert.classList.add("show");
+	}
+	messageSpan.innerText = message;
+}

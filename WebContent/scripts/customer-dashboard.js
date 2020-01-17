@@ -178,9 +178,20 @@ function makeWithdrawal(){
 
 // Post Money Transfer
 function postMoneyTransfer(){
-	let amount = inputAmountTrasnfer.value < 0 ? 0 : inputAmountTrasnfer.value; 
-	let destinationAccount = inputDestinationAccount.value < 0 ? 0 : inputDestinationAccount.value;
-	if(amount && destinationAccount){
+	let amount = inputAmountTrasnfer.value; 
+	let destinationAccount = inputDestinationAccount.value;
+	let selectedSource = +selectSourceAccount.value;
+	if(isNaN(selectedSource)){
+		showMessageTransfer("Select a source account");
+	}else if(amount.trim() == ""){
+		showMessageTransfer("Enter something into account");
+	}else if(destinationAccount.trim() == ""){
+		showMessageTransfer("Enter something into destination");
+	}else if(amount < 0){
+		showMessageTransfer("Amount must be greater than 0");
+	}else if(destinationAccount < 0){
+		showMessageTransfer("Detination account number must be greater than 0");
+	}else{
 		let transfer = {
 				sourceAccount: selectSourceAccount.value,
 				destinationAccount,
@@ -194,22 +205,18 @@ function postMoneyTransfer(){
 			},
 			body: JSON.stringify(transfer)
 		}).then( res => res.json() )
-			.then( data => {
-				showMessage(data.message);
-			} )
+		.then( data => {
+			showMessageTransfer(data.message);
+		} )
 		
-		
-	}else if(amount == 0){
-		showMessage("Amount Must Be Greater Than 0");
-	}else if(destinationAccount == 0){
-		showMessage("Destination Account Number Must Be A Positive Number");
 	}
 	
 	return false;
 }
 
 
-//Get Message span for alerts
+
+//Get Message span for alerts on dashboard
 let alert = document.getElementById("alert");
 let messageSpan = document.getElementById("message");
 let closeAlertButton = document.getElementById("alert-close");
@@ -217,7 +224,6 @@ let closeAlertButton = document.getElementById("alert-close");
 closeAlertButton.addEventListener( "click", e => {
 	alert.classList.remove("show");
 });
-
 function showMessage(message){
 	if(!alert.classList.contains("show")){
 		alert.classList.add("show");
@@ -225,7 +231,7 @@ function showMessage(message){
 	messageSpan.innerText = message;
 }
 
-//Get Message span for apply alerts
+//Get Message span for applications alerts
 let alertApply = document.getElementById("alert-apply");
 let messageSpanApply = document.getElementById("message-apply");
 let closeAlertButtonApply = document.getElementById("alert-close-apply");
@@ -255,6 +261,23 @@ function showMessageTransaction(message){
 		alertTransaction.classList.add("show");
 	}
 	messageSpanTransaction.innerText = message;
+}
+
+
+//Get Message span for transfers alerts
+let alertTransfer= document.getElementById("alert-transfers");
+let messageSpanTransfer= document.getElementById("message-transfers");
+let closeAlertButtonTransfer= document.getElementById("alert-close-transfers");
+
+closeAlertButtonTransfer.addEventListener( "click", e => {
+	alertTransfer.classList.remove("show");
+});
+
+function showMessageTransfer(message){
+	if(!alertTransfer.classList.contains("show")){
+		alertTransfer.classList.add("show");
+	}
+	messageSpanTransfer.innerText = message;
 }
 
 
